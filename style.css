@@ -136,24 +136,24 @@ body {
 }
 
 .service-icon img {
-    width: 56px;
-    height: 56px;
+    width: 72px;
+    height: 72px;
     object-fit: contain;
     border-radius: 8px;
 }
 
 .analytics-icon {
     font-size: 2.5rem;
-    width: 56px;
-    height: 56px;
+    width: 72px;
+    height: 72px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .analytics-icon img {
-    width: 56px;
-    height: 56px;
+    width: 72px;
+    height: 72px;
     object-fit: contain;
     border-radius: 8px;
 }
@@ -301,9 +301,9 @@ body {
         padding: 16px;
     }
     
-    .logo {
-        width: 40px;
-        height: 40px;
+    .service-icon img, .analytics-icon img {
+        width: 56px;
+        height: 56px;
     }
     
     .service-info h2 {
