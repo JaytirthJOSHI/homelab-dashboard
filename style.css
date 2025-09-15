@@ -151,6 +151,13 @@ body {
     justify-content: center;
 }
 
+.analytics-icon img {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
 .service-info h3, .analytics-info h3 {
     margin: 0 0 8px 0;
     font-size: 1.125rem;
