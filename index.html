@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homelab Dashboard - mac-ubuntu</title>
-    <meta name="description" content="Homelab infrastructure dashboard for monitoring and managing services">
+    <title>Homelab Dashboard</title>
+    <meta name="description" content="Personal homelab service dashboard">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,36 +12,78 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1>homelab.local</h1>
+            <h1>🏠 Joshi Homelab</h1>
             <div class="system-info">
                 <div class="stat">
                     <div class="stat-label">Services</div>
-                    <div class="stat-value" id="services-count">-/-</div>
+                    <div class="stat-value">2</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-label">Status</div>
-                    <div class="stat-value" id="overall-status">Loading...</div>
+                    <div class="stat-label">Server</div>
+                    <div class="stat-value">mac-ubuntu</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-label">Last Check</div>
-                    <div class="stat-value" id="last-update">-</div>
+                    <div class="stat-label">Updated</div>
+                    <div class="stat-value" id="last-update">Now</div>
                 </div>
             </div>
         </header>
 
         <div class="service-section">
-            <h2 class="section-title">Core Services</h2>
-            <div class="services" id="services-container">
-                <!-- Services will be populated dynamically -->
-                <div class="card loading">
-                    <div class="status-indicator"></div>
-                    <div class="logo loading-placeholder"></div>
+            <h2 class="section-title">Services</h2>
+            <div class="services-grid">
+                <a href="http://mac-ubuntu:3001" target="_blank" rel="noopener noreferrer" class="service-card">
+                    <div class="service-icon">
+                        <img src="https://api.civo.com/k3s-marketplace/uptime-kuma.png" alt="Uptime Kuma">
+                    </div>
                     <div class="service-info">
-                        <h2>Loading services...</h2>
-                        <p>Fetching data from Uptime Kuma</p>
-                        <div class="service-meta">
-                            <span>Please wait...</span>
-                        </div>
+                        <h3>Uptime Kuma</h3>
+                        <p>Monitoring Dashboard</p>
+                        <span class="service-port">:3001</span>
+                    </div>
+                </a>
+
+                <a href="http://mac-ubuntu:5678" target="_blank" rel="noopener noreferrer" class="service-card">
+                    <div class="service-icon">
+                        <img src="https://cdn.prod.website-files.com/657639ebfb91510f45654149/684b0e84bca6e63d2fc38b29_n8n-color.webp" alt="n8n">
+                    </div>
+                    <div class="service-info">
+                        <h3>n8n</h3>
+                        <p>Workflow Automation</p>
+                        <span class="service-port">:5678</span>
+                    </div>
+                </a>
+
+                <!-- Add more services here -->
+                <div class="service-card add-service">
+                    <div class="service-icon">
+                        <span class="add-icon">+</span>
+                    </div>
+                    <div class="service-info">
+                        <h3>Add Service</h3>
+                        <p>Click to add new service</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="analytics-section">
+            <h2 class="section-title">Analytics & Monitoring</h2>
+            <div class="analytics-grid">
+                <a href="http://mac-ubuntu:3001" target="_blank" rel="noopener noreferrer" class="analytics-card">
+                    <div class="analytics-icon">📊</div>
+                    <div class="analytics-info">
+                        <h3>Uptime Analytics</h3>
+                        <p>Service uptime monitoring and statistics</p>
+                    </div>
+                </a>
+
+                <!-- Add more analytics tools here -->
+                <div class="analytics-card add-analytics">
+                    <div class="analytics-icon">+</div>
+                    <div class="analytics-info">
+                        <h3>Add Analytics</h3>
+                        <p>Add monitoring tools</p>
                     </div>
                 </div>
             </div>
@@ -49,144 +91,68 @@
     </div>
 
     <script>
-        // Configuration - API endpoint for our backend
-        const API_ENDPOINT = '/api/uptime-status';
-        
-        // Service configuration with icons and descriptions
-        const SERVICE_CONFIG = {
-            'Uptime Kuma': {
-                icon: 'https://api.civo.com/k3s-marketplace/uptime-kuma.png',
-                description: 'Uptime monitoring and status page',
-                url: 'http://mac-ubuntu:3001'
-            },
-            'n8n': {
-                icon: 'https://cdn.prod.website-files.com/657639ebfb91510f45654149/684b0e84bca6e63d2fc38b29_n8n-color.webp',
-                description: 'Workflow automation platform',
-                url: 'http://mac-ubuntu:5678'
-            }
-        };
-
-        // Fetch data from our backend API
-        async function fetchUptimeData() {
-            try {
-                const response = await fetch(API_ENDPOINT, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                console.log('Received data from API:', data);
-                return data;
-                
-            } catch (error) {
-                console.error('Error fetching uptime data:', error);
-                return null;
-            }
-        }
-
-        // Update the dashboard with real data
-        function updateDashboard(data) {
-            if (!data || !data.monitors) {
-                showError();
-                return;
-            }
-
-            const monitors = data.monitors;
-            const upServices = monitors.filter(m => m.status === 1).length;
-            const totalServices = monitors.length;
-            
-            // Update header stats
-            document.getElementById('services-count').textContent = `${upServices}/${totalServices}`;
-            document.getElementById('overall-status').textContent = upServices === totalServices ? 'All Systems Operational' : 'Issues Detected';
-            document.getElementById('overall-status').className = `stat-value ${upServices === totalServices ? 'status-good' : 'status-warning'}`;
-            document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
-
-            // Update services
-            const container = document.getElementById('services-container');
-            container.innerHTML = '';
-
-            monitors.forEach(monitor => {
-                const config = SERVICE_CONFIG[monitor.name] || {
-                    icon: '/favicon.ico',
-                    description: 'Service',
-                    url: monitor.url
-                };
-
-                const statusClass = monitor.status === 1 ? '' : monitor.status === 0 ? 'offline' : 'warning';
-                const statusText = monitor.status === 1 ? 'Online' : monitor.status === 0 ? 'Offline' : 'Pending';
-                
-                const serviceCard = document.createElement('a');
-                serviceCard.href = config.url;
-                serviceCard.target = '_blank';
-                serviceCard.rel = 'noopener noreferrer';
-                serviceCard.className = 'card';
-                
-                serviceCard.innerHTML = `
-                    <div class="status-indicator ${statusClass}"></div>
-                    <img src="${config.icon}" alt="${monitor.name}" class="logo" loading="lazy">
-                    <div class="service-info">
-                        <h2>${monitor.name}</h2>
-                        <p>${config.description}</p>
-                        <div class="service-meta">
-                            <span class="uptime">${monitor.uptime?.toFixed(1) || '-'}% uptime</span>
-                            <span class="status">${statusText}</span>
-                            <span class="ping">${monitor.avgPing || '-'}ms</span>
-                        </div>
-                    </div>
-                `;
-                
-                container.appendChild(serviceCard);
+        // Anti-inspection measures
+        (function() {
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
             });
+            
+            // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'F12' || 
+                    (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
+                    (e.ctrlKey && e.key === 'U')) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Detect developer tools
+            let devtools = {open: false, orientation: null};
+            const threshold = 160;
+            setInterval(function() {
+                if (window.outerHeight - window.innerHeight > threshold || 
+                    window.outerWidth - window.innerWidth > threshold) {
+                    if (!devtools.open) {
+                        devtools.open = true;
+                        // Redirect away if dev tools detected
+                        window.location.href = 'about:blank';
+                    }
+                } else {
+                    devtools.open = false;
+                }
+            }, 500);
+            
+            // Disable text selection
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable drag and drop
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+        })();
+
+        // Simple timestamp update
+        function updateTimestamp() {
+            const now = new Date();
+            document.getElementById('last-update').textContent = now.toLocaleTimeString();
         }
 
-        // Show error state
-        function showError() {
-            document.getElementById('services-count').textContent = 'Error';
-            document.getElementById('overall-status').textContent = 'API Error';
-            document.getElementById('overall-status').className = 'stat-value status-error';
-            document.getElementById('last-update').textContent = 'Failed';
-
-            const container = document.getElementById('services-container');
-            container.innerHTML = `
-                <div class="card error">
-                    <div class="status-indicator offline"></div>
-                    <div class="logo error-icon">⚠️</div>
-                    <div class="service-info">
-                        <h2>API Connection Failed</h2>
-                        <p>Unable to fetch data from Uptime Kuma</p>
-                        <div class="service-meta">
-                            <span>Check API key and connection</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Initialize dashboard
-        async function initDashboard() {
-            const data = await fetchUptimeData();
-            updateDashboard(data);
-        }
-
-        // Auto-refresh every 30 seconds
-        function startAutoRefresh() {
-            setInterval(async () => {
-                const data = await fetchUptimeData();
-                updateDashboard(data);
-            }, 30000);
-        }
-
-        // Start the dashboard
-        document.addEventListener('DOMContentLoaded', () => {
-            initDashboard();
-            startAutoRefresh();
-        });
+        // Update timestamp every minute
+        setInterval(updateTimestamp, 60000);
+        
+        // Set initial timestamp
+        updateTimestamp();
+        
+        // Console warning
+        console.log('%cSTOP!', 'color: red; font-size: 50px; font-weight: bold;');
+        console.log('%cThis is a browser feature intended for developers. Unauthorized access is prohibited.', 'color: red; font-size: 16px;');
     </script>
 </body>
 </html>

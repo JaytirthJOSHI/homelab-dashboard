@@ -6,6 +6,51 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Basic authentication middleware
+function basicAuth(req, res, next) {
+    const auth = req.headers.authorization;
+    
+    if (!auth || !auth.startsWith('Basic ')) {
+        res.setHeader('WWW-Authenticate', 'Basic realm="Homelab Dashboard"');
+        return res.status(401).send('Authentication required');
+    }
+    
+    const credentials = Buffer.from(auth.slice(6), 'base64').toString().split(':');
+    const username = credentials[0];
+    const password = credentials[1];
+    
+    // Check credentials (set these in your .env file)
+    const validUsername = process.env.DASHBOARD_USERNAME || 'admin';
+    const validPassword = process.env.DASHBOARD_PASSWORD || 'homelab';
+    
+    // Add rate limiting - block IP after 3 failed attempts
+    if (!req.session) req.session = {};
+    const clientIP = req.ip || req.connection.remoteAddress;
+    if (!global.failedAttempts) global.failedAttempts = {};
+    
+    if (global.failedAttempts[clientIP] >= 3) {
+        return res.status(429).send('Too many failed attempts. Access blocked.');
+    }
+    
+    if (username === validUsername && password === validPassword) {
+        // Reset failed attempts on successful login
+        if (global.failedAttempts[clientIP]) {
+            delete global.failedAttempts[clientIP];
+        }
+        next();
+    } else {
+        // Track failed attempts
+        global.failedAttempts[clientIP] = (global.failedAttempts[clientIP] || 0) + 1;
+        console.log(`Failed login attempt from ${clientIP}. Attempts: ${global.failedAttempts[clientIP]}`);
+        
+        res.setHeader('WWW-Authenticate', 'Basic realm="Homelab Dashboard"');
+        return res.status(401).send('Invalid credentials');
+    }
+}
+
+// Apply authentication to all routes
+app.use(basicAuth);
+
 // Enable CORS for all routes
 app.use(cors());
 app.use(express.json());
@@ -13,106 +58,15 @@ app.use(express.json());
 // Serve static files
 app.use(express.static(path.join(__dirname)));
 
-// API proxy endpoint to fetch Uptime Kuma data
-app.get('/api/uptime-status', async (handleRequest) => {
-    try {
-        const fetch = (await import('node-fetch')).default;
-        
-        // Try multiple API endpoints that Uptime Kuma provides
-        const endpoints = [
-            '/api/status-page/monitor-list',
-            '/api/status-page/heartbeat',
-            '/api/monitors'
-        ];
-        
-        let data = null;
-        
-        for (const endpoint of endpoints) {
-            try {
-                const response = await fetch(`${process.env.UPTIME_KUMA_URL}${endpoint}`, {
-                    headers: {
-                        'Authorization': `Bearer ${process.env.UPTIME_KUMA_API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    timeout: 5000
-                });
-                
-                if (response.ok) {
-                    data = await response.json();
-                    console.log(`Successfully fetched data from ${endpoint}`);
-                    break;
-                }
-            } catch (err) {
-                console.log(`Failed to fetch from ${endpoint}:`, err.message);
-                continue;
-            }
-        }
-        
-        if (!data) {
-            // If API calls fail, return simulated data for now
-            console.log('API calls failed, returning simulated data');
-            data = getSimulatedData();
-        }
-        
-        // Transform the data to match our expected format
-        const transformedData = transformUptimeData(data);
-        handleRequest.json(transformedData);
-        
-    } catch (error) {
-        console.error('Error fetching uptime data:', error);
-        // Return simulated data as fallback
-        handleRequest.json(getSimulatedData());
-    }
+// Simple API endpoint for dashboard info
+app.get('/api/status', (req, res) => {
+    res.json({
+        status: 'ok',
+        services: 2,
+        server: 'mac-ubuntu',
+        timestamp: new Date().toISOString()
+    });
 });
-
-// Transform Uptime Kuma API response to our format
-function transformUptimeData(apiData) {
-    // This function will need to be adjusted based on the actual API response format
-    // For now, return a normalized format
-    
-    if (apiData && apiData.monitors) {
-        return {
-            monitors: apiData.monitors.map(monitor => ({
-                id: monitor.id,
-                name: monitor.name || monitor.friendly_name || 'Unknown Service',
-                url: monitor.url,
-                status: monitor.status || (monitor.active ? 1 : 0),
-                uptime: monitor.uptime || Math.random() * 100,
-                avgPing: monitor.ping || Math.floor(Math.random() * 100) + 20,
-                lastCheck: new Date()
-            }))
-        };
-    }
-    
-    // If the API response doesn't match expected format, return simulated data
-    return getSimulatedData();
-}
-
-// Simulated data for testing/fallback
-function getSimulatedData() {
-    return {
-        monitors: [
-            {
-                id: 1,
-                name: 'Uptime Kuma',
-                url: 'http://mac-ubuntu:3001',
-                status: 1,
-                uptime: 99.9,
-                avgPing: 45,
-                lastCheck: new Date()
-            },
-            {
-                id: 2,
-                name: 'n8n',
-                url: 'http://mac-ubuntu:5678',
-                status: 1,
-                uptime: 98.7,
-                avgPing: 32,
-                lastCheck: new Date()
-            }
-        ]
-    };
-}
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
