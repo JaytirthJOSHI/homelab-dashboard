@@ -23,6 +23,10 @@
                     <div class="stat-value" id="last-update">Now</div>
                 </div>
             </div>
+            <div class="live-time" id="live-time">
+                <div class="time-display" id="current-time">--:--:--</div>
+                <div class="date-display" id="current-date">-- -- ----</div>
+            </div>
         </header>
 
         <div class="service-section">
@@ -115,16 +119,43 @@
             });
         })();
 
-        // Simple timestamp update
+        // Live time display functions
+        function updateLiveTime() {
+            const now = new Date();
+            
+            // Update live clock (every second)
+            const timeString = now.toLocaleTimeString('en-US', {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('current-time').textContent = timeString;
+            
+            // Update date display
+            const dateString = now.toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+            document.getElementById('current-date').textContent = dateString;
+        }
+
+        // Update timestamp for "Updated" field (every minute)
         function updateTimestamp() {
             const now = new Date();
             document.getElementById('last-update').textContent = now.toLocaleTimeString();
         }
 
+        // Update live time every second
+        setInterval(updateLiveTime, 1000);
+        
         // Update timestamp every minute
         setInterval(updateTimestamp, 60000);
         
-        // Set initial timestamp
+        // Set initial values
+        updateLiveTime();
         updateTimestamp();
         
         // Console warning

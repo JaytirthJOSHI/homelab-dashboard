@@ -48,6 +48,7 @@ body {
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    position: relative;
 }
 
 .header h1 {
@@ -313,5 +314,51 @@ body {
     .system-info {
         flex-wrap: wrap;
         gap: 16px;
+    }
+}
+
+/* Live Time Display */
+.live-time {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.time-display {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #48bb78;
+    line-height: 1.2;
+    text-shadow: 0 0 10px rgba(72, 187, 120, 0.3);
+}
+
+.date-display {
+    font-size: 0.8rem;
+    color: #a0aec0;
+    margin-top: 2px;
+    line-height: 1.2;
+}
+
+/* Responsive adjustments for live time */
+@media (max-width: 768px) {
+    .live-time {
+        position: static;
+        margin-top: 16px;
+        text-align: center;
+        order: 3;
+        width: 100%;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
     }
 }
