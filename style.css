@@ -122,6 +122,26 @@ body {
     justify-content: center;
 }
 
+/* Status Banner */
+.status-banner {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.status-banner.down {
+    background: #f56565;
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(245, 101, 101, 0.3);
+}
+
 .service-card:hover, .analytics-card:hover {
     background: #232937;
     border-color: #4299e1;
