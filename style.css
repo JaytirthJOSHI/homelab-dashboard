@@ -134,11 +134,12 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-family: 'JetBrains Mono', monospace;
+    z-index: 10;
 }
 
 .status-banner.down {
-    background: #f56565;
-    color: #ffffff;
+    background: #f56565 !important;
+    color: #ffffff !important;
     box-shadow: 0 0 10px rgba(245, 101, 101, 0.3);
 }
 
