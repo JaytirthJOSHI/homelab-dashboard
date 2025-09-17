@@ -138,9 +138,18 @@ body {
 }
 
 .status-banner.down {
+    background-color: #f56565 !important;
     background: #f56565 !important;
-    color: #ffffff !important;
+    color: #000000 !important;
     box-shadow: 0 0 10px rgba(245, 101, 101, 0.3);
+    border: 1px solid #e53e3e !important;
+}
+
+/* Force red background for down status */
+.service-card .status-banner.down {
+    background: #f56565 !important;
+    background-color: #f56565 !important;
+    color: #000000 !important;
 }
 
 .service-card:hover, .analytics-card:hover {
