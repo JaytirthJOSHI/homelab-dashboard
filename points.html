@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏆 Brother's Points Shop</title>
+    <meta name="description" content="Earn and spend points in the house shop!">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .points-display {
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            display: inline-block;
+            font-size: 2rem;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .task-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .task-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .task-card.completed {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border-color: #28a745;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .task-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .task-points {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .task-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .shop-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .shop-item {
+            background: linear-gradient(135deg, #fff, #f8f9fa);
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .shop-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-color: #ff6b6b;
+        }
+
+        .shop-item.affordable {
+            border-color: #28a745;
+        }
+
+        .shop-item.expensive {
+            border-color: #dc3545;
+            opacity: 0.7;
+        }
+
+        .shop-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .shop-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .shop-price {
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .shop-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .stats-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.3);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #dc3545, #fd7e14);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .points-display {
+                font-size: 1.5rem;
+                padding: 15px 30px;
+            }
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 Brother's Points Shop</h1>
+            <p>Complete tasks to earn points, then spend them in the house shop!</p>
+            <div class="points-display">
+                <span id="current-points">0</span> Points
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <h2>📊 Your Stats</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-earned">0</div>
+                    <div class="stat-label">Total Earned</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="total-spent">0</div>
+                    <div class="stat-label">Total Spent</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="tasks-completed">0</div>
+                    <div class="stat-label">Tasks Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="items-purchased">0</div>
+                    <div class="stat-label">Items Purchased</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="section">
+                <h2>🎯 Earn Points</h2>
+                <div class="task-grid" id="tasks-container">
+                    <!-- Tasks will be loaded dynamically -->
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🛒 House Shop</h2>
+                <div class="shop-grid" id="shop-container">
+                    <!-- Shop items will be loaded dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="refreshData()">🔄 Refresh</button>
+            <button class="btn btn-secondary" onclick="resetProgress()">🔄 Reset Progress</button>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // API Configuration
+        const API_BASE = window.location.origin; // Use local server for development
+        
+        // State management
+        let userData = {
+            points: 0,
+            totalEarned: 0,
+            totalSpent: 0,
+            tasksCompleted: 0,
+            itemsPurchased: 0,
+            completedTasks: new Set(),
+            purchasedItems: new Set()
+        };
+
+        // Sample data - in production, this would come from your API
+        const tasks = [
+            {
+                id: 'dishes',
+                title: 'Wash Dishes',
+                description: 'Clean all dishes and put them away',
+                points: 10,
+                category: 'chores'
+            },
+            {
+                id: 'trash',
+                title: 'Take Out Trash',
+                description: 'Empty all trash cans and take to curb',
+                points: 15,
+                category: 'chores'
+            },
+            {
+                id: 'laundry',
+                title: 'Do Laundry',
+                description: 'Wash, dry, and fold one load of laundry',
+                points: 20,
+                category: 'chores'
+            },
+            {
+                id: 'homework',
+                title: 'Complete Homework',
+                description: 'Finish all assigned homework for the day',
+                points: 25,
+                category: 'academic'
+            },
+            {
+                id: 'exercise',
+                title: 'Exercise for 30 minutes',
+                description: 'Do any form of exercise for at least 30 minutes',
+                points: 30,
+                category: 'health'
+            },
+            {
+                id: 'help_sibling',
+                title: 'Help Sibling',
+                description: 'Help your sibling with their homework or chores',
+                points: 35,
+                category: 'family'
+            }
+        ];
+
+        const shopItems = [
+            {
+                id: 'extra_screen_time',
+                title: 'Extra Screen Time',
+                description: '30 minutes of additional screen time',
+                price: 20,
+                category: 'privileges'
+            },
+            {
+                id: 'choose_dinner',
+                title: 'Choose Dinner',
+                description: 'Pick what the family has for dinner',
+                price: 30,
+                category: 'privileges'
+            },
+            {
+                id: 'skip_chore',
+                title: 'Skip One Chore',
+                description: 'Skip any one chore for the day',
+                price: 40,
+                category: 'privileges'
+            },
+            {
+                id: 'movie_night',
+                title: 'Movie Night Choice',
+                description: 'Choose the movie for family movie night',
+                price: 50,
+                category: 'privileges'
+            },
+            {
+                id: 'sleepover',
+                title: 'Sleepover with Friends',
+                description: 'Have friends over for a sleepover',
+                price: 100,
+                category: 'special'
+            },
+            {
+                id: 'new_game',
+                title: 'New Video Game',
+                description: 'Get a new video game (up to $30)',
+                price: 150,
+                category: 'purchases'
+            }
+        ];
+
+        // Initialize the app
+        async function init() {
+            await loadUserData();
+            renderTasks();
+            renderShopItems();
+            updateDisplay();
+        }
+
+        // Load user data from API
+        async function loadUserData() {
+            try {
+                const response = await fetch(`${API_BASE}/api/user-data`);
+                if (response.ok) {
+                    const data = await response.json();
+                    userData = { ...userData, ...data };
+                }
+            } catch (error) {
+                console.log('Using local data (API not available)');
+                // In development, use local storage
+                const saved = localStorage.getItem('brother-points-data');
+                if (saved) {
+                    userData = { ...userData, ...JSON.parse(saved) };
+                }
+            }
+        }
+
+        // Save user data
+        async function saveUserData() {
+            try {
+                await fetch(`${API_BASE}/api/user-data`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+            } catch (error) {
+                // Fallback to local storage
+                localStorage.setItem('brother-points-data', JSON.stringify(userData));
+            }
+        }
+
+        // Render tasks
+        function renderTasks() {
+            const container = document.getElementById('tasks-container');
+            container.innerHTML = tasks.map(task => `
+                <div class="task-card ${userData.completedTasks.has(task.id) ? 'completed' : ''}" 
+                     onclick="completeTask('${task.id}')">
+                    <div class="task-header">
+                        <div class="task-title">${task.title}</div>
+                        <div class="task-points">+${task.points}</div>
+                    </div>
+                    <div class="task-description">${task.description}</div>
+                </div>
+            `).join('');
+        }
+
+        // Render shop items
+        function renderShopItems() {
+            const container = document.getElementById('shop-container');
+            container.innerHTML = shopItems.map(item => {
+                const canAfford = userData.points >= item.price;
+                const alreadyPurchased = userData.purchasedItems.has(item.id);
+                return `
+                    <div class="shop-item ${canAfford ? 'affordable' : 'expensive'} ${alreadyPurchased ? 'purchased' : ''}" 
+                         onclick="purchaseItem('${item.id}')">
+                        <div class="shop-header">
+                            <div class="shop-title">${item.title}</div>
+                            <div class="shop-price">${item.price} pts</div>
+                        </div>
+                        <div class="shop-description">${item.description}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Complete a task
+        async function completeTask(taskId) {
+            if (userData.completedTasks.has(taskId)) {
+                showNotification('Task already completed!', 'error');
+                return;
+            }
+
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+
+            userData.completedTasks.add(taskId);
+            userData.points += task.points;
+            userData.totalEarned += task.points;
+            userData.tasksCompleted += 1;
+
+            await saveUserData();
+            renderTasks();
+            renderShopItems();
+            updateDisplay();
+            showNotification(`+${task.points} points! Great job!`);
+        }
+
+        // Purchase an item
+        async function purchaseItem(itemId) {
+            const item = shopItems.find(i => i.id === itemId);
+            if (!item) return;
+
+            if (userData.purchasedItems.has(itemId)) {
+                showNotification('Item already purchased!', 'error');
+                return;
+            }
+
+            if (userData.points < item.price) {
+                showNotification('Not enough points!', 'error');
+                return;
+            }
+
+            userData.purchasedItems.add(itemId);
+            userData.points -= item.price;
+            userData.totalSpent += item.price;
+            userData.itemsPurchased += 1;
+
+            await saveUserData();
+            renderShopItems();
+            updateDisplay();
+            showNotification(`Purchased: ${item.title}!`);
+        }
+
+        // Update display
+        function updateDisplay() {
+            document.getElementById('current-points').textContent = userData.points;
+            document.getElementById('total-earned').textContent = userData.totalEarned;
+            document.getElementById('total-spent').textContent = userData.totalSpent;
+            document.getElementById('tasks-completed').textContent = userData.tasksCompleted;
+            document.getElementById('items-purchased').textContent = userData.itemsPurchased;
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Refresh data
+        async function refreshData() {
+            document.body.classList.add('loading');
+            await loadUserData();
+            renderTasks();
+            renderShopItems();
+            updateDisplay();
+            document.body.classList.remove('loading');
+            showNotification('Data refreshed!');
+        }
+
+        // Reset progress
+        async function resetProgress() {
+            if (confirm('Are you sure you want to reset all progress? This cannot be undone!')) {
+                userData = {
+                    points: 0,
+                    totalEarned: 0,
+                    totalSpent: 0,
+                    tasksCompleted: 0,
+                    itemsPurchased: 0,
+                    completedTasks: new Set(),
+                    purchasedItems: new Set()
+                };
+                
+                await saveUserData();
+                renderTasks();
+                renderShopItems();
+                updateDisplay();
+                showNotification('Progress reset!');
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+# Cloudflare Worker configuration
+name = "brother-points-api"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+[env.production]
+name = "brother-points-api"
+
+# Add your custom domain here
+# routes = [
+#   { pattern = "points-api.joshi1.com/*", zone_name = "joshi1.com" }
+# ]
+
+# KV storage for persistent data (optional)
+# [[kv_namespaces]]
+# binding = "POINTS_DATA"
+# id = "your-kv-namespace-id"
+# preview_id = "your-preview-kv-namespace-id"
+
+# Environment variables (optional)
+# [env.production.vars]
+# ENVIRONMENT = "production"
