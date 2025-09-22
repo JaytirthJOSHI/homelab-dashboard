@@ -464,22 +464,46 @@ body {
     transform: scale(1.1);
 }
 
-.maintenance-btn {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #e6e6e6;
-    border-radius: 8px;
-    padding: 8px 12px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    margin-left: 15px;
+/* Bottom Maintenance Toggle */
+.maintenance-toggle-bottom {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
 }
 
-.maintenance-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.4);
-    transform: scale(1.05);
+.maintenance-btn-bottom {
+    background: linear-gradient(135deg, #ff6b6b, #ffa500);
+    border: none;
+    color: white;
+    border-radius: 25px;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.maintenance-btn-bottom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+    background: linear-gradient(135deg, #ff5252, #ff9800);
+}
+
+.maintenance-btn-bottom .maintenance-icon {
+    font-size: 16px;
+    animation: pulse 2s infinite;
+}
+
+.maintenance-btn-bottom .maintenance-text {
+    font-size: 14px;
+    font-weight: 600;
 }
 
 /* Adjust container when maintenance banner is visible */

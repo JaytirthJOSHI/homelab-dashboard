@@ -39,7 +39,6 @@
                 <div class="time-display" id="current-time">--:--:--</div>
                 <div class="date-display" id="current-date">-- -- ----</div>
             </div>
-            <button class="maintenance-btn" onclick="toggleMaintenance()" title="Toggle Maintenance Mode">🔧</button>
         </header>
 
         <div class="service-section">
@@ -226,5 +225,13 @@
         console.log('%cSTOP!', 'color: red; font-size: 50px; font-weight: bold;');
         console.log('%cThis is a browser feature intended for developers. Unauthorized access is prohibited.', 'color: red; font-size: 16px;');
     </script>
+
+    <!-- Maintenance Toggle Button (Bottom) -->
+    <div class="maintenance-toggle-bottom">
+        <button class="maintenance-btn-bottom" onclick="toggleMaintenance()" title="Toggle Maintenance Mode">
+            <span class="maintenance-icon">🔧</span>
+            <span class="maintenance-text">Maintenance</span>
+        </button>
+    </div>
 </body>
 </html>
