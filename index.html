@@ -30,11 +30,10 @@
                     <div class="stat-label">Services</div>
                     <div class="stat-value">2</div>
                 </div>
-                <div class="stat">
-                    <div class="stat-label">Updated</div>
-                    <div class="stat-value" id="last-update">Now</div>
-                </div>
             </div>
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">🌙</button>
+            <button id="search-open" class="theme-toggle" aria-label="Search (⌘K)" title="Search (⌘K)">🔍</button>
+            <button id="about-open" class="theme-toggle" aria-label="About this dashboard" title="About this dashboard">ℹ️</button>
             <div class="live-time" id="live-time">
                 <div class="time-display" id="current-time">--:--:--</div>
                 <div class="date-display" id="current-date">-- -- ----</div>
@@ -54,7 +53,17 @@
                         <span class="service-port">:5678</span>
                     </div>
                 </a>
-                <a href="http://Joshivps1-ocp:8000" target="_blank" rel="noopener noreferrer" class="service-card">
+                <a href="https://Joshi1.com" target="_blank" rel="noopener noreferrer" class="service-card">
+                    <div class="service-icon">
+                        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #0ea5e9, #22c55e); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">🌐</div>
+                    </div>
+                    <div class="service-info">
+                        <h3>Joshi1.com</h3>
+                        <p>Personal website</p>
+                        <span class="service-port">Public</span>
+                    </div>
+                </a>
+                <a href="http://Joshivps1-ocp:8000" target="_blank" rel="noopener noreferrer" class="service-card is-down" aria-disabled="true" tabindex="-1">
                     <div class="status-banner down">Down</div>
                     <div class="service-icon">
                         <img src="assets/logos/paperless-ngx-logo.png" alt="Paperless-ngx">
@@ -128,7 +137,6 @@
                 }
             });
             
-            // Detect developer tools
             let devtools = {open: false, orientation: null};
             const threshold = 160;
             setInterval(function() {
@@ -136,7 +144,6 @@
                     window.outerWidth - window.innerWidth > threshold) {
                     if (!devtools.open) {
                         devtools.open = true;
-                        // Redirect away if dev tools detected
                         window.location.href = 'about:blank';
                     }
                 } else {
@@ -144,20 +151,17 @@
                 }
             }, 500);
             
-            // Disable text selection
             document.addEventListener('selectstart', function(e) {
                 e.preventDefault();
                 return false;
             });
             
-            // Disable drag and drop
             document.addEventListener('dragstart', function(e) {
                 e.preventDefault();
                 return false;
             });
         })();
 
-        // Live time display functions
         function updateLiveTime() {
             const now = new Date();
             
@@ -199,7 +203,6 @@
                 localStorage.setItem('maintenanceMode', 'true');
             }
         }
-
         // Check maintenance mode on page load
         function checkMaintenanceMode() {
             const maintenanceMode = localStorage.getItem('maintenanceMode');
@@ -224,7 +227,287 @@
         // Console warning
         console.log('%cSTOP!', 'color: red; font-size: 50px; font-weight: bold;');
         console.log('%cThis is a browser feature intended for developers. Unauthorized access is prohibited.', 'color: red; font-size: 16px;');
+        
+        // Theme handling
+        (function() {
+            const storageKey = 'theme-preference';
+            const getSystemPreference = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            const getPreference = () => localStorage.getItem(storageKey) || getSystemPreference();
+            const applyTheme = (theme) => {
+                document.documentElement.setAttribute('data-theme', theme === 'light' ? 'light' : 'dark');
+                const btn = document.getElementById('theme-toggle');
+                if (btn) btn.textContent = theme === 'light' ? '☀️' : '🌙';
+            };
+
+            // Initialize
+            applyTheme(getPreference());
+
+            // Toggle on click
+            const toggleBtn = document.getElementById('theme-toggle');
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function() {
+                    const next = (document.documentElement.getAttribute('data-theme') === 'light') ? 'dark' : 'light';
+                    localStorage.setItem(storageKey, next);
+                    applyTheme(next);
+                });
+            }
+
+            // Respond to system changes when user hasn't explicitly chosen
+            if (window.matchMedia) {
+                const media = window.matchMedia('(prefers-color-scheme: light)');
+                media.addEventListener && media.addEventListener('change', function() {
+                    if (!localStorage.getItem(storageKey)) applyTheme(getSystemPreference());
+                });
+            }
+        })();
+
+        // Command palette / Search (⌘K / Ctrl+K)
+        (function() {
+            var overlay = document.getElementById('search-overlay');
+            var input = null;
+            var list = null;
+            var items = [];
+            var focusedIndex = -1;
+
+            function collectEntries() {
+                var links = document.querySelectorAll('.service-card, .analytics-card');
+                var entries = [];
+                links.forEach(function(link) {
+                    var isDown = link.classList.contains('is-down') || link.querySelector('.status-banner.down');
+                    var titleEl = link.querySelector('h3');
+                    var descEl = link.querySelector('p');
+                    entries.push({
+                        title: titleEl ? titleEl.textContent.trim() : (link.getAttribute('href') || 'Link'),
+                        desc: descEl ? descEl.textContent.trim() : '',
+                        href: link.getAttribute('href') || '#',
+                        disabled: !!isDown
+                    });
+                });
+                return entries;
+            }
+
+            function renderList(entries) {
+                list.innerHTML = '';
+                items = entries;
+                focusedIndex = -1;
+                entries.forEach(function(entry, idx) {
+                    var li = document.createElement('button');
+                    li.type = 'button';
+                    li.className = 'search-item' + (entry.disabled ? ' disabled' : '');
+                    li.setAttribute('data-index', String(idx));
+                    li.innerHTML = '<div class="search-item-title">' + entry.title + '</div>' +
+                                   (entry.desc ? '<div class="search-item-desc">' + entry.desc + '</div>' : '');
+                    if (!entry.disabled) {
+                        li.addEventListener('click', function(){ window.open(entry.href, '_blank', 'noopener'); close(); });
+                    }
+                    list.appendChild(li);
+                });
+            }
+
+            function filter(term) {
+                var all = collectEntries();
+                var t = term.trim().toLowerCase();
+                if (!t) return renderList(all);
+                renderList(all.filter(function(e){
+                    return e.title.toLowerCase().includes(t) || e.desc.toLowerCase().includes(t) || e.href.toLowerCase().includes(t);
+                }));
+            }
+
+            function open() {
+                if (!overlay) return;
+                overlay.style.display = 'flex';
+                setTimeout(function(){ overlay.classList.add('visible'); }, 0);
+                input = document.getElementById('search-input');
+                list = document.getElementById('search-results');
+                filter('');
+                setTimeout(function(){ input && input.focus(); }, 50);
+            }
+
+            function close() {
+                if (!overlay) return;
+                overlay.classList.remove('visible');
+                setTimeout(function(){ overlay.style.display = 'none'; }, 150);
+            }
+
+            function moveFocus(delta) {
+                var buttons = Array.prototype.slice.call(list.querySelectorAll('.search-item'));
+                if (!buttons.length) return;
+                var next = focusedIndex + delta;
+                if (next < 0) next = buttons.length - 1;
+                if (next >= buttons.length) next = 0;
+                focusedIndex = next;
+                buttons.forEach(function(b){ b.classList.remove('focused'); });
+                var target = buttons[focusedIndex];
+                target.classList.add('focused');
+                target.scrollIntoView({ block: 'nearest' });
+            }
+
+            // Open via keyboard
+            document.addEventListener('keydown', function(e){
+                var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+                var cmdOrCtrl = isMac ? e.metaKey : e.ctrlKey;
+                if (cmdOrCtrl && (e.key === 'k' || e.key === 'K')) {
+                    e.preventDefault();
+                    open();
+                }
+                if (e.key === 'Escape' && overlay && overlay.classList.contains('visible')) {
+                    e.preventDefault();
+                    close();
+                }
+            });
+
+            // Open via button
+            var openBtn = document.getElementById('search-open');
+            if (openBtn) openBtn.addEventListener('click', open);
+
+            // Overlay interactions
+            document.addEventListener('click', function(e){
+                if (!overlay || overlay.style.display === 'none') return;
+                if (e.target === overlay) close();
+            });
+
+            document.addEventListener('keydown', function(e){
+                if (!overlay || overlay.style.display === 'none') return;
+                if (e.key === 'ArrowDown') { e.preventDefault(); moveFocus(1); }
+                if (e.key === 'ArrowUp') { e.preventDefault(); moveFocus(-1); }
+                if (e.key === 'Enter') {
+                    var buttons = Array.prototype.slice.call(document.querySelectorAll('.search-item'));
+                    var target = buttons[focusedIndex];
+                    if (target && !target.classList.contains('disabled')) {
+                        var idx = parseInt(target.getAttribute('data-index') || '-1', 10);
+                        if (idx >= 0 && items[idx]) { window.open(items[idx].href, '_blank', 'noopener'); close(); }
+                    }
+                }
+            });
+
+            document.addEventListener('input', function(e){
+                if (e.target && e.target.id === 'search-input') {
+                    filter(e.target.value || '');
+                }
+            });
+        })();
     </script>
+
+    <!-- Search Modal -->
+    <div id="search-overlay" class="modal-overlay" style="display: none;" aria-hidden="true">
+        <div class="modal search-modal" role="dialog" aria-modal="true" aria-labelledby="search-title">
+            <div class="search-header">
+                <input id="search-input" type="text" class="search-input" placeholder="Search services (⌘K)" aria-label="Search services" autocomplete="off" spellcheck="false" />
+            </div>
+            <div class="search-body">
+                <div id="search-results" class="search-results" role="listbox"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div id="about-overlay" class="modal-overlay" style="display: none;" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="about-title">
+            <div class="modal-header">
+                <h3 id="about-title">About This Homelab Dashboard</h3>
+                <button id="about-close" class="modal-close" aria-label="Close">×</button>
+            </div>
+            <div class="modal-body">
+                <p>This homelab runs on a Docker Swarm overlay network connected via Tailscale for secure, private connectivity across nodes.</p>
+                <h4>Orchestration & Networking</h4>
+                <ul>
+                    <li>Orchestrator: Docker Swarm (multi-node)</li>
+                    <li>Mesh network: Tailscale (WireGuard) connecting all nodes</li>
+                </ul>
+                <h4>Nodes</h4>
+                <ul>
+                    <li>In-house: MacBook Pro (2009) — 2 CPU cores, 8 GB RAM</li>
+                    <li>Cloud: Azure B1 — burstable VM</li>
+                    <li>Cloud: Oracle e2.micro — 1 CPU core, 1 GB RAM</li>
+                    <li>Cloud: Oracle e2.micro — 1 CPU core, 1 GB RAM</li>
+                </ul>
+                <h4>Workloads</h4>
+                <ul>
+                    <li>n8n (`:5678`) — workflow automation</li>
+                    <li>Paperless-ngx (`:8000`) — document management</li>
+                    <li>Uptime Kuma (`:3001`) — uptime monitoring</li>
+                    <li>Tailscale Admin — device and ACL management</li>
+                    <li>Family Points — household points shop</li>
+                </ul>
+                <h4>Notes</h4>
+                <ul>
+                    <li>Services are scheduled across nodes based on available resources.</li>
+                    <li>Tailscale provides private addressing and secure transport between nodes.</li>
+                    <li>The dashboard supports light/dark themes and persists your preference locally.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+        // About modal logic
+        (function() {
+            function openAbout() {
+                var overlay = document.getElementById('about-overlay');
+                if (overlay) {
+                    overlay.style.display = 'flex';
+                    setTimeout(function(){ overlay.classList.add('visible'); }, 0);
+                }
+            }
+            function closeAbout() {
+                var overlay = document.getElementById('about-overlay');
+                if (overlay) {
+                    overlay.classList.remove('visible');
+                    setTimeout(function(){ overlay.style.display = 'none'; }, 150);
+                }
+            }
+            var openBtn = document.getElementById('about-open');
+            if (openBtn) openBtn.addEventListener('click', openAbout);
+            document.addEventListener('click', function(e){
+                var overlay = document.getElementById('about-overlay');
+                if (!overlay) return;
+                if (e.target === overlay || (e.target && e.target.id === 'about-close')) {
+                    closeAbout();
+                }
+            });
+            document.addEventListener('keydown', function(e){
+                if (e.key === 'Escape') closeAbout();
+            });
+        })();
+    </script>
+
+    <!-- About Modal -->
+    <div id="about-overlay" class="modal-overlay" style="display: none;" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="about-title">
+            <div class="modal-header">
+                <h3 id="about-title">About This Homelab Dashboard</h3>
+                <button id="about-close" class="modal-close" aria-label="Close">×</button>
+            </div>
+            <div class="modal-body">
+                <p>This homelab runs on a Docker Swarm overlay network connected via Tailscale for secure, private connectivity across nodes.</p>
+                <h4>Orchestration & Networking</h4>
+                <ul>
+                    <li>Orchestrator: Docker Swarm (multi-node)</li>
+                    <li>Mesh network: Tailscale (WireGuard) connecting all nodes</li>
+                </ul>
+                <h4>Nodes</h4>
+                <ul>
+                    <li>In-house: MacBook Pro (2009) — 2 CPU cores, 8 GB RAM</li>
+                    <li>Cloud: Azure B1 — burstable VM</li>
+                    <li>Cloud: Oracle e2.micro — 1 CPU core, 1 GB RAM</li>
+                    <li>Cloud: Oracle e2.micro — 1 CPU core, 1 GB RAM</li>
+                </ul>
+                <h4>Workloads</h4>
+                <ul>
+                    <li>n8n (`:5678`) — workflow automation</li>
+                    <li>Paperless-ngx (`:8000`) — document management</li>
+                    <li>Uptime Kuma (`:3001`) — uptime monitoring</li>
+                    <li>Tailscale Admin — device and ACL management</li>
+                    <li>Family Points — household points shop</li>
+                </ul>
+                <h4>Notes</h4>
+                <ul>
+                    <li>Services are scheduled across nodes based on available resources.</li>
+                    <li>Tailscale provides private addressing and secure transport between nodes.</li>
+                    <li>The dashboard supports light/dark themes and persists your preference locally.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 
     <!-- Maintenance Toggle Button (Bottom) -->
     <div class="maintenance-toggle-bottom">
