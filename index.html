@@ -10,6 +10,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
+    <!-- Maintenance Mode Banner -->
+    <div class="maintenance-banner" id="maintenance-banner" style="display: none;">
+        <div class="maintenance-content">
+            <div class="maintenance-icon">🔧</div>
+            <div class="maintenance-text">
+                <h3>Planned Maintenance</h3>
+                <p>Services are currently down for scheduled maintenance. We'll be back soon!</p>
+            </div>
+            <button class="maintenance-toggle" onclick="toggleMaintenance()">×</button>
+        </div>
+    </div>
+
     <div class="container">
         <header class="header">
             <h1>🏠 Joshi Homelab</h1>
@@ -27,6 +39,7 @@
                 <div class="time-display" id="current-time">--:--:--</div>
                 <div class="date-display" id="current-date">-- -- ----</div>
             </div>
+            <button class="maintenance-btn" onclick="toggleMaintenance()" title="Toggle Maintenance Mode">🔧</button>
         </header>
 
         <div class="service-section">
@@ -174,11 +187,36 @@
             document.getElementById('last-update').textContent = now.toLocaleTimeString();
         }
 
+        // Maintenance mode toggle
+        function toggleMaintenance() {
+            const banner = document.getElementById('maintenance-banner');
+            const isVisible = banner.style.display !== 'none';
+            
+            if (isVisible) {
+                banner.style.display = 'none';
+                localStorage.setItem('maintenanceMode', 'false');
+            } else {
+                banner.style.display = 'block';
+                localStorage.setItem('maintenanceMode', 'true');
+            }
+        }
+
+        // Check maintenance mode on page load
+        function checkMaintenanceMode() {
+            const maintenanceMode = localStorage.getItem('maintenanceMode');
+            if (maintenanceMode === 'true') {
+                document.getElementById('maintenance-banner').style.display = 'block';
+            }
+        }
+
         // Update live time every second
         setInterval(updateLiveTime, 1000);
         
         // Update timestamp every minute
         setInterval(updateTimestamp, 60000);
+
+        // Check maintenance mode on page load
+        checkMaintenanceMode();
         
         // Set initial values
         updateLiveTime();
