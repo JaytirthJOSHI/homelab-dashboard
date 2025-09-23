@@ -867,43 +867,10 @@
         </div>
     </div>
 
-    <div class="login-modal" id="purchase-modal">
-        <div class="login-content">
-            <h2>Purchase Approval</h2>
-            <input type="password" id="purchase-password" placeholder="Enter purchase password">
-            <button class="btn btn-admin" onclick="confirmPurchasePassword()">Confirm</button>
-            <button class="btn btn-secondary" onclick="hidePurchaseModal()">Cancel</button>
-        </div>
-    </div>
 
     <div class="notification" id="notification"></div>
 
     <script>
-        const PURCHASE_PASSWORD = '1405784';
-        let pendingPurchaseItemId = null;
-
-        function showPurchaseModal(itemId) {
-            pendingPurchaseItemId = itemId;
-            const input = document.getElementById('purchase-password');
-            if (input) input.value = '';
-            document.getElementById('purchase-modal').classList.add('show');
-        }
-
-        function hidePurchaseModal() {
-            document.getElementById('purchase-modal').classList.remove('show');
-            pendingPurchaseItemId = null;
-        }
-
-        function confirmPurchasePassword() {
-            const entered = (document.getElementById('purchase-password').value || '').trim();
-            if (entered !== PURCHASE_PASSWORD) {
-                showNotification('Invalid purchase password', 'error');
-                return;
-            }
-            const itemId = pendingPurchaseItemId;
-            hidePurchaseModal();
-            if (itemId) performPurchase(itemId);
-        }
 
         // Supabase Configuration
         const SUPABASE_URL = 'https://kvbdzfwaxvgaeqqpelxp.supabase.co';
@@ -1189,16 +1156,6 @@
 
             if (userData.points < item.price) {
                 showNotification('Not enough points!', 'error');
-                return;
-            }
-            // Require password before proceeding
-            showPurchaseModal(itemId);
-        }
-
-        async function performPurchase(itemId) {
-            const item = shopItems.find(i => i.id === itemId);
-            if (!item) {
-                showNotification('Item not found!', 'error');
                 return;
             }
 
