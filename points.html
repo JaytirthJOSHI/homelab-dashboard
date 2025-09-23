@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏆 Brother's Points Shop</title>
+    <title>🏆 Beacon Points</title>
     <meta name="description" content="Earn and spend points in the house shop!">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -692,7 +692,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🏆 Brother's Points Shop</h1>
+            <h1>🏆 Beacon Points</h1>
             <p class="subtitle">Complete tasks to earn points, then spend them in the house shop!</p>
             <div class="points-display">
                 <span id="current-points">0</span> Points
@@ -867,9 +867,44 @@
         </div>
     </div>
 
+    <div class="login-modal" id="purchase-modal">
+        <div class="login-content">
+            <h2>Purchase Approval</h2>
+            <input type="password" id="purchase-password" placeholder="Enter purchase password">
+            <button class="btn btn-admin" onclick="confirmPurchasePassword()">Confirm</button>
+            <button class="btn btn-secondary" onclick="hidePurchaseModal()">Cancel</button>
+        </div>
+    </div>
+
     <div class="notification" id="notification"></div>
 
     <script>
+        const PURCHASE_PASSWORD = 'beaconbuy123';
+        let pendingPurchaseItemId = null;
+
+        function showPurchaseModal(itemId) {
+            pendingPurchaseItemId = itemId;
+            const input = document.getElementById('purchase-password');
+            if (input) input.value = '';
+            document.getElementById('purchase-modal').classList.add('show');
+        }
+
+        function hidePurchaseModal() {
+            document.getElementById('purchase-modal').classList.remove('show');
+            pendingPurchaseItemId = null;
+        }
+
+        function confirmPurchasePassword() {
+            const entered = (document.getElementById('purchase-password').value || '').trim();
+            if (entered !== PURCHASE_PASSWORD) {
+                showNotification('Invalid purchase password', 'error');
+                return;
+            }
+            const itemId = pendingPurchaseItemId;
+            hidePurchaseModal();
+            if (itemId) performPurchase(itemId);
+        }
+
         // Supabase Configuration
         const SUPABASE_URL = 'https://kvbdzfwaxvgaeqqpelxp.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2YmR6ZndheHZnYWVxcXBlbHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg0NjU3ODMsImV4cCI6MjA3NDA0MTc4M30.23oJ1kNG1YY_VJ9yrUQBMFCt59vFp1kXkpx3aNp4cMg';
@@ -1154,6 +1189,16 @@
 
             if (userData.points < item.price) {
                 showNotification('Not enough points!', 'error');
+                return;
+            }
+            // Require password before proceeding
+            showPurchaseModal(itemId);
+        }
+
+        async function performPurchase(itemId) {
+            const item = shopItems.find(i => i.id === itemId);
+            if (!item) {
+                showNotification('Item not found!', 'error');
                 return;
             }
 

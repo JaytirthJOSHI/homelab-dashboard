@@ -1,8 +1,8 @@
--- Supabase Database Schema for Brother's Points System
+-- Supabase Database Schema for Beacon Points
 -- Run these commands in your Supabase SQL Editor
 
 -- Enable Row Level Security
-ALTER DATABASE postgres SET "app.joshi1.com" = 'brother-points-system';
+ALTER DATABASE postgres SET "app.joshi1.com" = 'beacon-points';
 
 -- Create users table
 CREATE TABLE IF NOT EXISTS users (
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS fulfillment_tasks (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Insert default user (your brother)
+-- Insert default user (default profile)
 INSERT INTO users (username, display_name, points, total_earned) 
 VALUES ('brother', 'Brother', 0, 0)
 ON CONFLICT (username) DO UPDATE SET

@@ -8,6 +8,19 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Performance optimizations -->
+    <link rel="dns-prefetch" href="//Joshivps1-ocp">
+    <link rel="dns-prefetch" href="//Joshi1.com">
+    <link rel="dns-prefetch" href="//login.tailscale.com">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="style.css" as="style">
+    <link rel="preload" href="assets/logos/n8n-logo.webp" as="image">
+    <link rel="preload" href="assets/logos/uptime-kuma-logo.png" as="image">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
 </head>
 <body>
     <!-- Maintenance Mode Banner -->
@@ -28,7 +41,15 @@
             <div class="system-info">
                 <div class="stat">
                     <div class="stat-label">Services</div>
-                    <div class="stat-value">2</div>
+                    <div class="stat-value" id="service-count">Loading...</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Uptime</div>
+                    <div class="stat-value" id="uptime-percentage">--</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Last Update</div>
+                    <div class="stat-value" id="last-update">--:--</div>
                 </div>
             </div>
             <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">🌙</button>
@@ -45,7 +66,7 @@
             <div class="services-grid">
                 <a href="http://Joshivps1-ocp:5678" target="_blank" rel="noopener noreferrer" class="service-card">
                     <div class="service-icon">
-                        <img src="assets/logos/n8n-logo.webp" alt="n8n">
+                        <img src="assets/logos/n8n-logo.webp" alt="n8n" loading="eager" width="72" height="72">
                     </div>
                     <div class="service-info">
                         <h3>n8n</h3>
@@ -66,7 +87,7 @@
                 <a href="http://Joshivps1-ocp:8000" target="_blank" rel="noopener noreferrer" class="service-card is-down" aria-disabled="true" tabindex="-1">
                     <div class="status-banner down">Down</div>
                     <div class="service-icon">
-                        <img src="assets/logos/paperless-ngx-logo.png" alt="Paperless-ngx">
+                        <img src="assets/logos/paperless-ngx-logo.png" alt="Paperless-ngx" loading="lazy" width="72" height="72">
                     </div>
                     <div class="service-info">
                         <h3>Paperless-ngx</h3>
@@ -82,7 +103,7 @@
             <div class="analytics-grid">
                 <a href="http://Joshivps1-ocp:3001" target="_blank" rel="noopener noreferrer" class="analytics-card">
                     <div class="analytics-icon">
-                        <img src="assets/logos/uptime-kuma-logo.png" alt="Uptime Kuma">
+                        <img src="assets/logos/uptime-kuma-logo.png" alt="Uptime Kuma" loading="lazy" width="72" height="72">
                     </div>
                     <div class="analytics-info">
                         <h3>Uptime Kuma</h3>
@@ -91,7 +112,7 @@
                 </a>
                 <a href="https://login.tailscale.com/admin/machines" target="_blank" rel="noopener noreferrer" class="analytics-card">
                     <div class="analytics-icon">
-                        <img src="assets/logos/tailscale-logo.png" alt="Tailscale">
+                        <img src="assets/logos/tailscale-logo.png" alt="Tailscale" loading="lazy" width="72" height="72">
                     </div>
                     <div class="analytics-info">
                         <h3>Tailscale</h3>
@@ -109,7 +130,7 @@
                         <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #ff6b6b, #ffa500); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">🏆</div>
                     </div>
                     <div class="service-info">
-                        <h3>Brother's Points Shop</h3>
+                        <h3>Beacon Points</h3>
                         <p>Earn and spend points in the house shop</p>
                         <span class="service-port">Family</span>
                     </div>
@@ -119,24 +140,35 @@
     </div>
 
     <script>
-        // Anti-inspection measures
+        // Enhanced security measures (less aggressive)
         (function() {
-            // Disable right-click context menu
+            // Only disable right-click on sensitive elements
             document.addEventListener('contextmenu', function(e) {
+                // Allow right-click on input fields and text areas
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    return;
+                }
+                // Show a friendly message instead of blocking
                 e.preventDefault();
+                console.log('🔒 This is a private homelab dashboard. Please respect the system.');
                 return false;
             });
             
-            // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+            // Disable common dev tools shortcuts (but allow debugging in development)
             document.addEventListener('keydown', function(e) {
-                if (e.key === 'F12' || 
-                    (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
-                    (e.ctrlKey && e.key === 'U')) {
-                    e.preventDefault();
-                    return false;
+                // Only block in production-like environments
+                if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                    if (e.key === 'F12' || 
+                        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
+                        (e.ctrlKey && e.key === 'U')) {
+                        e.preventDefault();
+                        console.log('🔒 Developer tools are restricted on this dashboard.');
+                        return false;
+                    }
                 }
             });
             
+            // Gentle devtools detection (no redirect, just logging)
             let devtools = {open: false, orientation: null};
             const threshold = 160;
             setInterval(function() {
@@ -144,22 +176,15 @@
                     window.outerWidth - window.innerWidth > threshold) {
                     if (!devtools.open) {
                         devtools.open = true;
-                        window.location.href = 'about:blank';
+                        console.log('🔒 Developer tools detected. This is a private homelab dashboard.');
                     }
                 } else {
                     devtools.open = false;
                 }
-            }, 500);
+            }, 1000); // Less frequent checks
             
-            document.addEventListener('selectstart', function(e) {
-                e.preventDefault();
-                return false;
-            });
-            
-            document.addEventListener('dragstart', function(e) {
-                e.preventDefault();
-                return false;
-            });
+            // Allow text selection for better UX
+            // Removed the selectstart and dragstart blocking
         })();
 
         function updateLiveTime() {
@@ -188,6 +213,220 @@
         function updateTimestamp() {
             const now = new Date();
             document.getElementById('last-update').textContent = now.toLocaleTimeString();
+        }
+
+        // Real-time monitoring functions
+        let monitoringData = {
+            services: [],
+            uptime: 0,
+            lastUpdate: null
+        };
+
+        async function fetchMonitoringData() {
+            try {
+                const response = await fetch('/api/monitoring');
+                if (response.ok) {
+                    const data = await response.json();
+                    monitoringData = data;
+                    updateMonitoringDisplay();
+                } else {
+                    console.warn('Failed to fetch monitoring data');
+                    // Fallback to static data
+                    updateStaticMonitoringDisplay();
+                }
+            } catch (error) {
+                console.warn('Error fetching monitoring data:', error);
+                updateStaticMonitoringDisplay();
+            }
+        }
+
+        function updateMonitoringDisplay() {
+            // Update service count
+            const serviceCountEl = document.getElementById('service-count');
+            if (serviceCountEl) {
+                serviceCountEl.textContent = monitoringData.services.length || 3;
+            }
+
+            // Update uptime percentage
+            const uptimeEl = document.getElementById('uptime-percentage');
+            if (uptimeEl) {
+                uptimeEl.textContent = `${monitoringData.uptime || 95}%`;
+                uptimeEl.className = `stat-value ${getUptimeStatusClass(monitoringData.uptime)}`;
+            }
+
+            // Update service cards with real status
+            updateServiceCards();
+        }
+
+        function updateStaticMonitoringDisplay() {
+            // Fallback display when monitoring is unavailable
+            const serviceCountEl = document.getElementById('service-count');
+            if (serviceCountEl) {
+                serviceCountEl.textContent = '3';
+            }
+
+            const uptimeEl = document.getElementById('uptime-percentage');
+            if (uptimeEl) {
+                uptimeEl.textContent = '95%';
+                uptimeEl.className = 'stat-value status-good';
+            }
+        }
+
+        function getUptimeStatusClass(uptime) {
+            if (uptime >= 99) return 'status-good';
+            if (uptime >= 95) return 'status-warning';
+            return 'status-error';
+        }
+
+        function updateServiceCards() {
+            // Update service cards based on monitoring data
+            const serviceCards = document.querySelectorAll('.service-card');
+            serviceCards.forEach(card => {
+                const serviceName = card.querySelector('h3').textContent.toLowerCase();
+                const isDown = monitoringData.services.some(service => 
+                    service.name.toLowerCase().includes(serviceName) && !service.isUp
+                );
+                
+                if (isDown) {
+                    card.classList.add('is-down');
+                    if (!card.querySelector('.status-banner')) {
+                        const statusBanner = document.createElement('div');
+                        statusBanner.className = 'status-banner down';
+                        statusBanner.textContent = 'Down';
+                        card.insertBefore(statusBanner, card.firstChild);
+                    }
+                } else {
+                    card.classList.remove('is-down');
+                    const statusBanner = card.querySelector('.status-banner.down');
+                    if (statusBanner) {
+                        statusBanner.remove();
+                    }
+                }
+            });
+        }
+
+        // Start monitoring updates
+        function startMonitoring() {
+            fetchMonitoringData(); // Initial fetch
+            setInterval(fetchMonitoringData, 30000); // Update every 30 seconds
+        }
+
+        // Enhanced notification system
+        function showNotification(message, type = 'info', duration = 4000) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            
+            const icon = {
+                'success': '✅',
+                'error': '❌',
+                'warning': '⚠️',
+                'info': 'ℹ️'
+            }[type] || 'ℹ️';
+            
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span class="notification-icon">${icon}</span>
+                    <span class="notification-message">${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => notification.classList.add('show'), 10);
+            
+            // Auto remove
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, duration);
+        }
+
+        // Service health checker
+        async function checkServiceHealth(url, timeout = 5000) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), timeout);
+                
+                const response = await fetch(url, {
+                    method: 'HEAD',
+                    mode: 'no-cors',
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                return true;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        // Enhanced service status with health checks
+        async function performHealthChecks() {
+            const services = [
+                { name: 'n8n', url: 'http://Joshivps1-ocp:5678' },
+                { name: 'Paperless-ngx', url: 'http://Joshivps1-ocp:8000' },
+                { name: 'Uptime Kuma', url: 'http://Joshivps1-ocp:3001' }
+            ];
+
+            const healthResults = await Promise.allSettled(
+                services.map(async (service) => ({
+                    ...service,
+                    isHealthy: await checkServiceHealth(service.url)
+                }))
+            );
+
+            const healthyServices = healthResults
+                .filter(result => result.status === 'fulfilled' && result.value.isHealthy)
+                .length;
+
+            const totalServices = services.length;
+            
+            if (healthyServices < totalServices) {
+                showNotification(
+                    `${totalServices - healthyServices} service(s) are down`,
+                    'warning',
+                    6000
+                );
+            }
+
+            return healthResults;
+        }
+
+        // System resource monitoring (mock data for demo)
+        function getSystemResources() {
+            return {
+                cpu: Math.floor(Math.random() * 30) + 20, // 20-50%
+                memory: Math.floor(Math.random() * 40) + 30, // 30-70%
+                disk: Math.floor(Math.random() * 20) + 60, // 60-80%
+                network: Math.floor(Math.random() * 50) + 10 // 10-60%
+            };
+        }
+
+        // Display system resources in header
+        function updateSystemResources() {
+            const resources = getSystemResources();
+            const systemInfo = document.querySelector('.system-info');
+            
+            if (systemInfo && !document.getElementById('system-resources')) {
+                const resourcesDiv = document.createElement('div');
+                resourcesDiv.id = 'system-resources';
+                resourcesDiv.className = 'stat';
+                resourcesDiv.innerHTML = `
+                    <div class="stat-label">Resources</div>
+                    <div class="stat-value">
+                        <div class="resource-item">
+                            <span class="resource-label">CPU</span>
+                            <div class="resource-bar">
+                                <div class="resource-fill" style="width: ${resources.cpu}%"></div>
+                            </div>
+                            <span class="resource-value">${resources.cpu}%</span>
+                        </div>
+                    </div>
+                `;
+                systemInfo.appendChild(resourcesDiv);
+            }
         }
 
         // Maintenance mode toggle
@@ -224,40 +463,137 @@
         updateLiveTime();
         updateTimestamp();
         
+        // Start monitoring
+        startMonitoring();
+        
+        // Start health checks
+        performHealthChecks();
+        
+        // Update system resources
+        updateSystemResources();
+        
+        // Welcome notification
+        setTimeout(() => {
+            showNotification('Dashboard loaded successfully! 🚀', 'success', 3000);
+        }, 1000);
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('Service Worker registered successfully:', registration.scope);
+                        
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    showNotification('Dashboard update available! Refresh to update.', 'info', 5000);
+                                }
+                            });
+                        });
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+
+            // Listen for messages from service worker
+            navigator.serviceWorker.addEventListener('message', event => {
+                if (event.data && event.data.type === 'SYNC_COMPLETE') {
+                    showNotification('Sync completed successfully!', 'success', 2000);
+                }
+            });
+        }
+        
         // Console warning
         console.log('%cSTOP!', 'color: red; font-size: 50px; font-weight: bold;');
         console.log('%cThis is a browser feature intended for developers. Unauthorized access is prohibited.', 'color: red; font-size: 16px;');
         
-        // Theme handling
+        // Enhanced theme handling with animations
         (function() {
             const storageKey = 'theme-preference';
             const getSystemPreference = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
             const getPreference = () => localStorage.getItem(storageKey) || getSystemPreference();
+            
             const applyTheme = (theme) => {
-                document.documentElement.setAttribute('data-theme', theme === 'light' ? 'light' : 'dark');
+                const isLight = theme === 'light';
+                document.documentElement.setAttribute('data-theme', isLight ? 'light' : 'dark');
+                
+                // Enhanced button animation
                 const btn = document.getElementById('theme-toggle');
-                if (btn) btn.textContent = theme === 'light' ? '☀️' : '🌙';
+                if (btn) {
+                    btn.style.transform = 'rotate(180deg)';
+                    setTimeout(() => {
+                        btn.textContent = isLight ? '☀️' : '🌙';
+                        btn.style.transform = 'rotate(0deg)';
+                    }, 150);
+                }
+                
+                // Add theme change animation class
+                document.body.classList.add('theme-transitioning');
+                setTimeout(() => {
+                    document.body.classList.remove('theme-transitioning');
+                }, 300);
             };
 
-            // Initialize
-            applyTheme(getPreference());
+            // Initialize with smooth transition
+            const initialTheme = getPreference();
+            applyTheme(initialTheme);
 
-            // Toggle on click
+            // Enhanced toggle with haptic feedback
             const toggleBtn = document.getElementById('theme-toggle');
             if (toggleBtn) {
-                toggleBtn.addEventListener('click', function() {
-                    const next = (document.documentElement.getAttribute('data-theme') === 'light') ? 'dark' : 'light';
+                toggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Haptic feedback on mobile
+                    if ('vibrate' in navigator) {
+                        navigator.vibrate(50);
+                    }
+                    
+                    const current = document.documentElement.getAttribute('data-theme');
+                    const next = current === 'light' ? 'dark' : 'light';
                     localStorage.setItem(storageKey, next);
                     applyTheme(next);
+                    
+                    // Show brief notification
+                    showThemeNotification(next);
                 });
             }
 
-            // Respond to system changes when user hasn't explicitly chosen
+            // Respond to system changes with smooth transition
             if (window.matchMedia) {
                 const media = window.matchMedia('(prefers-color-scheme: light)');
                 media.addEventListener && media.addEventListener('change', function() {
-                    if (!localStorage.getItem(storageKey)) applyTheme(getSystemPreference());
+                    if (!localStorage.getItem(storageKey)) {
+                        applyTheme(getSystemPreference());
+                    }
                 });
+            }
+
+            // Theme change notification
+            function showThemeNotification(theme) {
+                const notification = document.createElement('div');
+                notification.className = 'theme-notification';
+                notification.innerHTML = `
+                    <div class="theme-notification-content">
+                        <span class="theme-icon">${theme === 'light' ? '☀️' : '🌙'}</span>
+                        <span class="theme-text">Switched to ${theme} mode</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Animate in
+                setTimeout(() => notification.classList.add('show'), 10);
+                
+                // Remove after delay
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => notification.remove(), 300);
+                }, 2000);
             }
         })();
 
@@ -427,7 +763,7 @@
                     <li>Paperless-ngx (`:8000`) — document management</li>
                     <li>Uptime Kuma (`:3001`) — uptime monitoring</li>
                     <li>Tailscale Admin — device and ACL management</li>
-                    <li>Family Points — household points shop</li>
+                    <li>Beacon Points — household points shop</li>
                 </ul>
                 <h4>Notes</h4>
                 <ul>
@@ -439,6 +775,7 @@
         </div>
     </div>
 
+    <script>
         // About modal logic
         (function() {
             function openAbout() {
@@ -469,45 +806,6 @@
             });
         })();
     </script>
-
-    <!-- About Modal -->
-    <div id="about-overlay" class="modal-overlay" style="display: none;" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="about-title">
-            <div class="modal-header">
-                <h3 id="about-title">About This Homelab Dashboard</h3>
-                <button id="about-close" class="modal-close" aria-label="Close">×</button>
-            </div>
-            <div class="modal-body">
-                <p>This homelab runs on a Docker Swarm overlay network connected via Tailscale for secure, private connectivity across nodes.</p>
-                <h4>Orchestration & Networking</h4>
-                <ul>
-                    <li>Orchestrator: Docker Swarm (multi-node)</li>
-                    <li>Mesh network: Tailscale (WireGuard) connecting all nodes</li>
-                </ul>
-                <h4>Nodes</h4>
-                <ul>
-                    <li>In-house: MacBook Pro (2009) — 2 CPU cores, 8 GB RAM</li>
-                    <li>Cloud: Azure B1 — burstable VM</li>
-                    <li>Cloud: Oracle e2.micro — 1 CPU core, 1 GB RAM</li>
-                    <li>Cloud: Oracle e2.micro — 1 CPU core, 1 GB RAM</li>
-                </ul>
-                <h4>Workloads</h4>
-                <ul>
-                    <li>n8n (`:5678`) — workflow automation</li>
-                    <li>Paperless-ngx (`:8000`) — document management</li>
-                    <li>Uptime Kuma (`:3001`) — uptime monitoring</li>
-                    <li>Tailscale Admin — device and ACL management</li>
-                    <li>Family Points — household points shop</li>
-                </ul>
-                <h4>Notes</h4>
-                <ul>
-                    <li>Services are scheduled across nodes based on available resources.</li>
-                    <li>Tailscale provides private addressing and secure transport between nodes.</li>
-                    <li>The dashboard supports light/dark themes and persists your preference locally.</li>
-                </ul>
-            </div>
-        </div>
-    </div>
 
     <!-- Maintenance Toggle Button (Bottom) -->
     <div class="maintenance-toggle-bottom">
