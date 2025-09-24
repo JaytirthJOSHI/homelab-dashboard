@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Joshi Homelab Dashboard</title>
+    <meta name="description" content="Learn about the Joshi Homelab infrastructure, VPS setup, and how this dashboard works">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Performance optimizations -->
+    <link rel="dns-prefetch" href="//Joshivps1-ocp">
+    <link rel="dns-prefetch" href="//Joshi1.com">
+    <link rel="dns-prefetch" href="//login.tailscale.com">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="style.css" as="style">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
+    
+    <style>
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .about-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .about-header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--heading);
+            margin-bottom: 16px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .about-header p {
+            font-size: 1.2rem;
+            color: var(--muted);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .about-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .about-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border-color: var(--accent-blue);
+        }
+        
+        .about-card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--heading);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .about-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--heading);
+            margin: 20px 0 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .about-card p {
+            color: var(--text);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        
+        .about-card ul {
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0 0 16px 0;
+            padding-left: 20px;
+        }
+        
+        .about-card li {
+            margin-bottom: 8px;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .tech-tag {
+            background: var(--accent-blue-soft);
+            color: var(--accent-blue);
+            border: 1px solid var(--accent-blue-border);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .infrastructure-diagram {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 32px 0;
+            text-align: center;
+        }
+        
+        .diagram-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .node {
+            background: var(--card-hover-bg);
+            border: 2px solid var(--accent-blue);
+            border-radius: 12px;
+            padding: 16px;
+            min-width: 200px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .node::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 12px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+        }
+        
+        .node h4 {
+            margin: 0 0 8px 0;
+            color: var(--heading);
+            font-weight: 600;
+        }
+        
+        .node p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+        
+        .connection-line {
+            width: 2px;
+            height: 24px;
+            background: var(--accent-blue);
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .connection-line::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            width: 10px;
+            height: 10px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+        }
+        
+        .connection-line::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: -4px;
+            width: 10px;
+            height: 10px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+        }
+        
+        .back-to-dashboard {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-blue);
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 20px 0;
+        }
+        
+        .back-to-dashboard:hover {
+            background: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px color-mix(in srgb, var(--accent-blue) 30%, transparent);
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-online {
+            background: var(--accent-green);
+            box-shadow: 0 0 8px rgba(72, 187, 120, 0.5);
+        }
+        
+        .status-offline {
+            background: var(--danger);
+            box-shadow: 0 0 8px rgba(245, 101, 101, 0.5);
+        }
+        
+        .feature-highlight {
+            background: linear-gradient(135deg, var(--accent-blue-soft), var(--accent-purple) 20%);
+            border: 1px solid var(--accent-blue-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .feature-highlight h4 {
+            color: var(--heading);
+            margin: 0 0 12px 0;
+            font-weight: 600;
+        }
+        
+        .feature-highlight p {
+            margin: 0;
+            color: var(--text);
+        }
+        
+        @media (max-width: 768px) {
+            .about-header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .about-card {
+                padding: 20px;
+            }
+            
+            .tech-stack {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="about-container">
+        <!-- Header -->
+        <div class="about-header">
+            <h1>🏠 About Joshi Homelab</h1>
+            <p>A distributed infrastructure powered by Docker Swarm, Tailscale networking, and multiple VPS instances running across different providers.</p>
+        </div>
+
+        <!-- Navigation -->
+        <div style="text-align: center; margin-bottom: 32px;">
+            <a href="index.html" class="back-to-dashboard">
+                <span>←</span>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="about-grid">
+            <!-- Infrastructure Overview -->
+            <div class="about-card">
+                <h2>🏗️ Infrastructure Overview</h2>
+                <p>This homelab runs on a distributed Docker Swarm cluster connected via Tailscale's WireGuard mesh networking, providing secure connectivity across multiple geographic locations.</p>
+                
+                <h3>🌐 Orchestration & Networking</h3>
+                <ul>
+                    <li><strong>Orchestrator:</strong> Docker Swarm (multi-node cluster)</li>
+                    <li><strong>Mesh Network:</strong> Tailscale (WireGuard) connecting all nodes</li>
+                    <li><strong>Service Discovery:</strong> Built-in Docker Swarm DNS</li>
+                    <li><strong>Load Balancing:</strong> Docker Swarm ingress network</li>
+                </ul>
+
+                <div class="tech-stack">
+                    <span class="tech-tag">Docker Swarm</span>
+                    <span class="tech-tag">Tailscale</span>
+                    <span class="tech-tag">WireGuard</span>
+                    <span class="tech-tag">Multi-node</span>
+                </div>
+            </div>
+
+            <!-- VPS Nodes -->
+            <div class="about-card">
+                <h2>🖥️ VPS Nodes</h2>
+                <p>Distributed across multiple cloud providers for redundancy and performance optimization.</p>
+                
+                <h3>🏠 In-house Node</h3>
+                <ul>
+                    <li><span class="status-indicator status-online"></span><strong>MacBook Pro (2009)</strong></li>
+                    <li>2 CPU cores, 8 GB RAM</li>
+                    <li>Local storage, 24/7 availability</li>
+                    <li>Primary services and data storage</li>
+                </ul>
+
+                <h3>☁️ Cloud Nodes</h3>
+                <ul>
+                    <li><span class="status-indicator status-online"></span><strong>Azure B1</strong> — Burstable VM</li>
+                    <li><span class="status-indicator status-online"></span><strong>Oracle e2.micro #1</strong> — 1 CPU, 1 GB RAM</li>
+                    <li><span class="status-indicator status-online"></span><strong>Oracle e2.micro #2</strong> — 1 CPU, 1 GB RAM</li>
+                </ul>
+
+                <div class="tech-stack">
+                    <span class="tech-tag">Azure</span>
+                    <span class="tech-tag">Oracle Cloud</span>
+                    <span class="tech-tag">Always Free</span>
+                    <span class="tech-tag">Burstable</span>
+                </div>
+            </div>
+
+            <!-- Services -->
+            <div class="about-card">
+                <h2>🔧 Running Services</h2>
+                <p>Services are automatically scheduled across nodes based on available resources and constraints.</p>
+                
+                <h3>🚀 Core Services</h3>
+                <ul>
+                    <li><strong>n8n</strong> (Port 5678) — Workflow automation platform</li>
+                    <li><strong>Paperless-ngx</strong> (Port 8000) — Document management system</li>
+                    <li><strong>Uptime Kuma</strong> (Port 3001) — Service monitoring and uptime tracking</li>
+                    <li><strong>Beacon Points</strong> — Household points and rewards system</li>
+                </ul>
+
+                <h3>🌐 External Services</h3>
+                <ul>
+                    <li><strong>Joshi1.com</strong> — Personal website (publicly accessible)</li>
+                    <li><strong>Tailscale Admin</strong> — Device and ACL management</li>
+                </ul>
+
+                <div class="tech-stack">
+                    <span class="tech-tag">n8n</span>
+                    <span class="tech-tag">Paperless-ngx</span>
+                    <span class="tech-tag">Uptime Kuma</span>
+                    <span class="tech-tag">Node.js</span>
+                </div>
+            </div>
+
+            <!-- Networking -->
+            <div class="about-card">
+                <h2>🔐 Security & Networking</h2>
+                <p>Tailscale provides zero-trust networking with encrypted connections between all nodes and devices.</p>
+                
+                <h3>🛡️ Security Features</h3>
+                <ul>
+                    <li>WireGuard encryption for all connections</li>
+                    <li>Zero-trust network access model</li>
+                    <li>Private addressing (100.x.x.x ranges)</li>
+                    <li>Access control lists (ACLs) for fine-grained permissions</li>
+                </ul>
+
+                <h3>🌍 Network Topology</h3>
+                <ul>
+                    <li>Mesh networking between all nodes</li>
+                    <li>Automatic failover and load balancing</li>
+                    <li>NAT traversal for behind-firewall connections</li>
+                    <li>Subnet routing for local network access</li>
+                </ul>
+
+                <div class="tech-stack">
+                    <span class="tech-tag">WireGuard</span>
+                    <span class="tech-tag">Zero Trust</span>
+                    <span class="tech-tag">ACLs</span>
+                    <span class="tech-tag">NAT Traversal</span>
+                </div>
+            </div>
+
+            <!-- Dashboard Features -->
+            <div class="about-card">
+                <h2>📊 Dashboard Features</h2>
+                <p>This dashboard provides real-time monitoring and management of your homelab infrastructure.</p>
+                
+                <h3>✨ Key Features</h3>
+                <ul>
+                    <li>Real-time service status monitoring</li>
+                    <li>Uptime statistics and health metrics</li>
+                    <li>Light/dark theme with local preference storage</li>
+                    <li>Responsive design for mobile and desktop</li>
+                    <li>Service discovery and quick access links</li>
+                    <li>Maintenance mode toggle for planned downtime</li>
+                </ul>
+
+                <h3>🔧 Technical Implementation</h3>
+                <ul>
+                    <li>Progressive Web App (PWA) capabilities</li>
+                    <li>Service Worker for offline functionality</li>
+                    <li>Real-time updates via JavaScript</li>
+                    <li>Secure API integration with Uptime Kuma</li>
+                </ul>
+
+                <div class="tech-stack">
+                    <span class="tech-tag">PWA</span>
+                    <span class="tech-tag">Service Worker</span>
+                    <span class="tech-tag">Real-time</span>
+                    <span class="tech-tag">Responsive</span>
+                </div>
+            </div>
+
+            <!-- Monitoring -->
+            <div class="about-card">
+                <h2>📈 Monitoring & Analytics</h2>
+                <p>Comprehensive monitoring setup ensures high availability and performance tracking.</p>
+                
+                <h3>📊 Monitoring Stack</h3>
+                <ul>
+                    <li><strong>Uptime Kuma</strong> — Service uptime and response time monitoring</li>
+                    <li><strong>Docker Swarm</strong> — Container health and resource usage</li>
+                    <li><strong>Tailscale</strong> — Network connectivity and device status</li>
+                    <li><strong>Custom Dashboard</strong> — Aggregated metrics and alerts</li>
+                </ul>
+
+                <h3>🚨 Alerting</h3>
+                <ul>
+                    <li>Email notifications for service downtime</li>
+                    <li>Webhook integrations for custom alerts</li>
+                    <li>Real-time status updates on dashboard</li>
+                    <li>Historical uptime statistics</li>
+                </ul>
+
+                <div class="tech-stack">
+                    <span class="tech-tag">Uptime Kuma</span>
+                    <span class="tech-tag">Email Alerts</span>
+                    <span class="tech-tag">Webhooks</span>
+                    <span class="tech-tag">Analytics</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Infrastructure Diagram -->
+        <div class="infrastructure-diagram">
+            <h2 style="margin-top: 0; margin-bottom: 24px;">🏗️ Infrastructure Architecture</h2>
+            <div class="diagram-content">
+                <div class="node">
+                    <h4>🏠 MacBook Pro (Local)</h4>
+                    <p>2 CPU cores, 8 GB RAM<br>Primary services & storage</p>
+                </div>
+                
+                <div class="connection-line"></div>
+                
+                <div class="node">
+                    <h4>🌐 Tailscale Mesh Network</h4>
+                    <p>WireGuard VPN<br>Zero-trust connectivity</p>
+                </div>
+                
+                <div class="connection-line"></div>
+                
+                <div class="node">
+                    <h4>☁️ Azure B1</h4>
+                    <p>Burstable VM<br>Secondary services</p>
+                </div>
+                
+                <div style="display: flex; gap: 32px; margin-top: 16px;">
+                    <div class="node">
+                        <h4>☁️ Oracle e2.micro #1</h4>
+                        <p>1 CPU, 1 GB RAM<br>Always Free tier</p>
+                    </div>
+                    
+                    <div class="node">
+                        <h4>☁️ Oracle e2.micro #2</h4>
+                        <p>1 CPU, 1 GB RAM<br>Always Free tier</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Highlights -->
+        <div class="feature-highlight">
+            <h4>🎯 Why This Setup?</h4>
+            <p>This distributed architecture provides redundancy, cost optimization (using free tiers), and geographic distribution for improved performance and reliability. The combination of Docker Swarm and Tailscale creates a robust, scalable infrastructure that can grow with your needs while maintaining security and ease of management.</p>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 40px; padding: 20px; color: var(--muted);">
+            <p>Built with ❤️ for the homelab community</p>
+            <p style="font-size: 0.9rem; margin-top: 8px;">
+                Last updated: <span id="last-updated"></span>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Update last updated timestamp
+        document.getElementById('last-updated').textContent = new Date().toLocaleDateString();
+
+        // Theme handling (inherit from main dashboard)
+        (function() {
+            const storageKey = 'theme-preference';
+            const getSystemPreference = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            const getPreference = () => localStorage.getItem(storageKey) || getSystemPreference();
+            
+            const applyTheme = (theme) => {
+                const isLight = theme === 'light';
+                document.documentElement.setAttribute('data-theme', isLight ? 'light' : 'dark');
+            };
+
+            // Initialize theme
+            applyTheme(getPreference());
+        })();
+
+        // Add smooth scrolling for better UX
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
