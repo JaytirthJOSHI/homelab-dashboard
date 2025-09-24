@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛒 Beacon Shop</title>
+    <meta name="description" content="Shop for rewards with your earned points!">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+        }
+
+        .header h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header .subtitle {
+            font-size: 1.4rem;
+            color: #666;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .points-display {
+            background: linear-gradient(135deg, #667eea, #f093fb);
+            color: white;
+            padding: 25px 50px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 2.5rem;
+            font-weight: 800;
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .points-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        }
+
+        .navigation {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .nav-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 0 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            box-shadow: 0 8px 25px rgba(240, 147, 251, 0.3);
+        }
+
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .shop-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 0;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .shop-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .shop-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 35px 70px rgba(0, 0, 0, 0.15);
+        }
+
+        .shop-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .shop-card.affordable {
+            border: 2px solid #28a745;
+        }
+
+        .shop-card.affordable::before {
+            background: #28a745;
+        }
+
+        .shop-card.expensive {
+            border: 2px solid #dc3545;
+            opacity: 0.7;
+        }
+
+        .shop-card.purchased {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border: 2px solid #28a745;
+        }
+
+        .shop-card.purchased::before {
+            background: #28a745;
+            transform: scaleX(1);
+        }
+
+        .shop-card.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px solid #6c757d;
+        }
+
+        .shop-card.disabled:hover {
+            transform: none;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+        }
+
+        .shop-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 20px 20px 0 0;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #6c757d;
+        }
+
+        .shop-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .shop-content {
+            padding: 25px;
+        }
+
+        .shop-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .shop-title {
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: #333;
+            line-height: 1.3;
+            flex: 1;
+            margin-right: 15px;
+        }
+
+        .shop-price {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+            white-space: nowrap;
+        }
+
+        .shop-description {
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .shop-category {
+            display: inline-block;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .shop-disabled {
+            color: #6c757d;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(108, 117, 125, 0.1);
+            border-radius: 8px;
+        }
+
+        .admin-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            display: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #28a745, #20c997);
+        }
+
+        .admin-panel.show {
+            display: block;
+        }
+
+        .admin-panel h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 30px;
+            color: #333;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #ffffff;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-admin {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-admin:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.3);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(108, 92, 231, 0.4);
+        }
+
+        .notification {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(40, 167, 69, 0.4);
+            transform: translateX(500px);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            font-weight: 600;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #dc3545, #fd7e14);
+            box-shadow: 0 15px 35px rgba(220, 53, 69, 0.4);
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #666;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-state h3 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #999;
+        }
+
+        .empty-state p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .login-modal.show {
+            display: flex;
+        }
+
+        .login-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .login-content h2 {
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .login-content input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+
+        .login-content input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-top: 10px;
+            border: 2px solid #e9ecef;
+        }
+
+        @media (max-width: 768px) {
+            .shop-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .points-display {
+                font-size: 2rem;
+                padding: 20px 40px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .nav-btn {
+                display: block;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 Beacon Shop</h1>
+            <p class="subtitle">Spend your points on amazing rewards!</p>
+            <div class="points-display">
+                <span id="current-points">0</span> Points
+            </div>
+        </div>
+
+        <div class="admin-panel" id="admin-panel">
+            <h2>🔧 Shop Admin Panel</h2>
+            
+            <!-- Shop Management -->
+            <div style="margin-bottom: 40px;">
+                <h3 style="margin-bottom: 20px; color: #333; font-size: 1.5rem;">🛒 Shop Item Management</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="new-item-title">Item Title</label>
+                        <input type="text" id="new-item-title" placeholder="Enter item title">
+                    </div>
+                    <div class="form-group">
+                        <label for="new-item-price">Price (Points)</label>
+                        <input type="number" id="new-item-price" placeholder="Points required">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="new-item-description">Description</label>
+                    <textarea id="new-item-description" placeholder="Enter item description"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="new-item-category">Category</label>
+                        <select id="new-item-category">
+                            <option value="privileges">Privileges</option>
+                            <option value="purchases">Purchases</option>
+                            <option value="special">Special</option>
+                            <option value="social">Social</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-item-image">Image URL</label>
+                        <input type="url" id="new-item-image" placeholder="Enter image URL">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="image-upload">Or Upload Image</label>
+                    <input type="file" id="image-upload" accept="image/*" onchange="previewImage(event)">
+                    <img id="image-preview" class="image-preview" style="display: none;" alt="Image preview">
+                </div>
+                <button class="btn btn-admin" onclick="addNewItem()">Add Item</button>
+                
+                <!-- Shop Items List -->
+                <div style="margin-top: 30px;">
+                    <h4 style="margin-bottom: 15px; color: #666;">Current Shop Items</h4>
+                    <div id="admin-items-list" style="max-height: 400px; overflow-y: auto; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px;">
+                        <!-- Items will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="shop-grid" id="shop-container">
+            <div class="empty-state">
+                <h3>🛒 Shop is Empty</h3>
+                <p>Use the admin panel to add amazing items to the shop!</p>
+            </div>
+        </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="refreshData()">🔄 Refresh</button>
+                    <button class="btn btn-admin" onclick="toggleAdminPanel()">🔧 Admin</button>
+                    <button class="btn btn-login" onclick="showLoginModal()">🔐 Login</button>
+                </div>
+    </div>
+
+    <div class="login-modal" id="login-modal">
+        <div class="login-content">
+            <h2>Admin Login</h2>
+            <input type="text" id="admin-username" placeholder="Enter username">
+            <input type="password" id="admin-password" placeholder="Enter password">
+            <button class="btn btn-admin" onclick="login()">Login</button>
+            <button class="btn btn-secondary" onclick="hideLoginModal()">Cancel</button>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://kvbdzfwaxvgaeqqpelxp.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2YmR6ZndheHZnYWVxcXBlbHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg0NjU3ODMsImV4cCI6MjA3NDA0MTc4M30.23oJ1kNG1YY_VJ9yrUQBMFCt59vFp1kXkpx3aNp4cMg';
+        
+        // Initialize Supabase client
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // State management
+        let userData = {
+            id: null,
+            username: 'brother',
+            display_name: 'Brother',
+            points: 0,
+            totalEarned: 0,
+            totalSpent: 0,
+            tasksCompleted: 0,
+            itemsPurchased: 0,
+            completedTasks: new Set(),
+            purchasedItems: new Set()
+        };
+
+        let shopItems = [];
+        let isAdminLoggedIn = false;
+
+        // Initialize the app
+        async function init() {
+            try {
+                await loadUserData();
+                await loadUserProgress();
+                await loadShopItems();
+                renderShopItems();
+                updateDisplay();
+            } catch (error) {
+                console.error('Error initializing app:', error);
+                showNotification('Error loading data. Please check your configuration.', 'error');
+            }
+        }
+
+        // Load user data from Supabase
+        async function loadUserData() {
+            try {
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('username', 'brother')
+                    .single();
+
+                if (error) {
+                    console.error('Error loading user data:', error);
+                    return;
+                }
+
+                if (data) {
+                    userData = {
+                        id: data.id,
+                        username: data.username,
+                        display_name: data.display_name,
+                        points: data.points,
+                        totalEarned: data.total_earned,
+                        totalSpent: data.total_spent,
+                        tasksCompleted: data.tasks_completed,
+                        itemsPurchased: data.items_purchased,
+                        completedTasks: new Set(),
+                        purchasedItems: new Set()
+                    };
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        // Load purchased items
+        async function loadUserProgress() {
+            try {
+                const { data: purchasedItems, error: itemsError } = await supabase
+                    .from('user_purchases')
+                    .select('item_id')
+                    .eq('user_id', userData.id);
+
+                if (!itemsError && purchasedItems) {
+                    userData.purchasedItems = new Set(purchasedItems.map(i => i.item_id));
+                }
+            } catch (error) {
+                console.error('Error loading user progress:', error);
+            }
+        }
+
+        // Load shop items from Supabase
+        async function loadShopItems() {
+            try {
+                const { data, error } = await supabase
+                    .from('shop_items')
+                    .select('*')
+                    .eq('is_active', true)
+                    .order('price', { ascending: true });
+
+                if (error) {
+                    console.error('Error loading shop items:', error);
+                    return;
+                }
+
+                shopItems = data || [];
+            } catch (error) {
+                console.error('Error loading shop items:', error);
+            }
+        }
+
+        // Render shop items in card layout
+        function renderShopItems() {
+            const container = document.getElementById('shop-container');
+            
+            if (shopItems.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>🛒 Shop is Empty</h3>
+                        <p>Use the admin panel to add amazing items to the shop!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = shopItems.map(item => {
+                const canAfford = userData.points >= item.price;
+                const alreadyPurchased = userData.purchasedItems.has(item.id);
+                const imageUrl = item.image_url || '';
+                
+                return `
+                    <div class="shop-card ${canAfford ? 'affordable' : 'expensive'} ${alreadyPurchased ? 'purchased' : ''}" 
+                         onclick="purchaseItem('${item.id}')">
+                        <div class="shop-image">
+                            ${imageUrl ? 
+                                `<img src="${imageUrl}" alt="${item.title}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                 <div style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; font-size: 3rem; color: #6c757d;">🛒</div>` :
+                                `<div style="display: flex; width: 100%; height: 100%; align-items: center; justify-content: center; font-size: 3rem; color: #6c757d;">🛒</div>`
+                            }
+                        </div>
+                        <div class="shop-content">
+                            <div class="shop-header">
+                                <div class="shop-title">${item.title}</div>
+                                <div class="shop-price">${item.price} pts</div>
+                            </div>
+                            <div class="shop-description">${item.description}</div>
+                            <div class="shop-category">${item.category}</div>
+                            ${alreadyPurchased ? '<div class="shop-disabled">✅ Already Purchased</div>' : ''}
+                            ${!canAfford && !alreadyPurchased ? `<div class="shop-disabled">Need ${item.price - userData.points} more points</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Purchase an item
+        async function purchaseItem(itemId) {
+            if (userData.purchasedItems.has(itemId)) {
+                showNotification('Item already purchased!', 'error');
+                return;
+            }
+
+            const item = shopItems.find(i => i.id === itemId);
+            if (!item) {
+                showNotification('Item not found!', 'error');
+                return;
+            }
+
+            if (userData.points < item.price) {
+                showNotification(`Not enough points! Need ${item.price - userData.points} more points.`, 'error');
+                return;
+            }
+
+            if (!confirm(`Purchase "${item.title}" for ${item.price} points?`)) {
+                return;
+            }
+
+            try {
+                // Deduct points immediately
+                const { error: pointsError } = await supabase
+                    .from('users')
+                    .update({
+                        points: userData.points - item.price,
+                        total_spent: userData.totalSpent + item.price,
+                        items_purchased: userData.itemsPurchased + 1
+                    })
+                    .eq('id', userData.id);
+
+                if (pointsError) {
+                    console.error('Error updating points:', pointsError);
+                    showNotification('Error purchasing item. Please try again.', 'error');
+                    return;
+                }
+
+                // Add to fulfillment tasks
+                const fulfillmentTask = {
+                    id: `fulfill_${Date.now()}`,
+                    item_id: itemId,
+                    item_title: item.title,
+                    item_description: item.description,
+                    points_spent: item.price,
+                    status: 'pending',
+                    created_at: new Date().toISOString()
+                };
+
+                const { error: fulfillmentError } = await supabase
+                    .from('fulfillment_tasks')
+                    .insert([fulfillmentTask]);
+
+                if (fulfillmentError) {
+                    console.error('Error creating fulfillment task:', fulfillmentError);
+                    // Continue anyway, points were already deducted
+                }
+
+                // Update local state
+                userData.purchasedItems.add(itemId);
+                userData.points -= item.price;
+                userData.totalSpent += item.price;
+                userData.itemsPurchased += 1;
+
+                renderShopItems();
+                updateDisplay();
+                showNotification(`🎉 Purchased: ${item.title}! Check admin panel for fulfillment.`);
+            } catch (error) {
+                console.error('Error purchasing item:', error);
+                showNotification('Error purchasing item. Please try again.', 'error');
+            }
+        }
+
+        // Add new shop item (Admin function)
+        async function addNewItem() {
+            if (!isAdminLoggedIn) {
+                showNotification('Please login as admin first', 'error');
+                return;
+            }
+
+            const title = document.getElementById('new-item-title').value;
+            const description = document.getElementById('new-item-description').value;
+            const price = parseInt(document.getElementById('new-item-price').value);
+            const category = document.getElementById('new-item-category').value;
+            const imageUrl = document.getElementById('new-item-image').value;
+
+            if (!title || !description || !price) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase
+                    .from('shop_items')
+                    .insert([{
+                        id: title.toLowerCase().replace(/\s+/g, '_'),
+                        title: title,
+                        description: description,
+                        price: price,
+                        category: category,
+                        image_url: imageUrl || null
+                    }]);
+
+                if (error) {
+                    console.error('Error adding item:', error);
+                    showNotification('Error adding item. Please try again.', 'error');
+                    return;
+                }
+
+                // Clear form
+                document.getElementById('new-item-title').value = '';
+                document.getElementById('new-item-description').value = '';
+                document.getElementById('new-item-price').value = '';
+                document.getElementById('new-item-image').value = '';
+                document.getElementById('image-preview').style.display = 'none';
+
+                // Reload items
+                await loadShopItems();
+                renderShopItems();
+                renderAdminItems();
+                showNotification('Item added successfully!');
+            } catch (error) {
+                console.error('Error adding item:', error);
+                showNotification('Error adding item. Please try again.', 'error');
+            }
+        }
+
+        // Delete shop item (Admin function)
+        async function deleteItem(itemId) {
+            if (!isAdminLoggedIn) {
+                showNotification('Please login as admin first', 'error');
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete this item?')) {
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('shop_items')
+                    .delete()
+                    .eq('id', itemId);
+
+                if (error) {
+                    console.error('Error deleting item:', error);
+                    showNotification('Error deleting item. Please try again.', 'error');
+                    return;
+                }
+
+                // Reload items
+                await loadShopItems();
+                renderShopItems();
+                renderAdminItems();
+                showNotification('Item deleted successfully!');
+            } catch (error) {
+                console.error('Error deleting item:', error);
+                showNotification('Error deleting item. Please try again.', 'error');
+            }
+        }
+
+        // Render admin items list
+        function renderAdminItems() {
+            const container = document.getElementById('admin-items-list');
+            if (shopItems.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center;">No items available</p>';
+                return;
+            }
+
+            container.innerHTML = shopItems.map(item => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 10px; background: #f8f9fa;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                            ${item.image_url ? `<img src="${item.image_url}" alt="${item.title}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;">` : ''}
+                            <div>
+                                <strong>${item.title}</strong> - ${item.price} pts
+                                <br><small style="color: #666;">${item.description}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="deleteItem('${item.id}')" style="background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        // Preview uploaded image
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('image-preview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    // Set the URL input to the data URL
+                    document.getElementById('new-item-image').value = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Update display
+        function updateDisplay() {
+            document.getElementById('current-points').textContent = userData.points;
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Refresh data
+        async function refreshData() {
+            document.body.classList.add('loading');
+            try {
+                await loadUserData();
+                await loadUserProgress();
+                await loadShopItems();
+                renderShopItems();
+                updateDisplay();
+                showNotification('Data refreshed!');
+            } catch (error) {
+                console.error('Error refreshing data:', error);
+                showNotification('Error refreshing data. Please try again.', 'error');
+            } finally {
+                document.body.classList.remove('loading');
+            }
+        }
+
+        // Toggle admin panel
+        function toggleAdminPanel() {
+            if (!isAdminLoggedIn) {
+                showNotification('Please login as admin first', 'error');
+                return;
+            }
+            const adminPanel = document.getElementById('admin-panel');
+            adminPanel.classList.toggle('show');
+            
+            // Load admin data when panel opens
+            if (adminPanel.classList.contains('show')) {
+                renderAdminItems();
+            }
+        }
+
+        // Show login modal
+        function showLoginModal() {
+            document.getElementById('login-modal').classList.add('show');
+        }
+
+        // Hide login modal
+        function hideLoginModal() {
+            document.getElementById('login-modal').classList.remove('show');
+        }
+
+        // Login function
+        function login() {
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+            
+            if (username === 'Jay@joshi1.com' && password === 'thisisadmin1111') {
+                isAdminLoggedIn = true;
+                hideLoginModal();
+                showNotification('Admin login successful!');
+                document.getElementById('admin-username').value = '';
+                document.getElementById('admin-password').value = '';
+                
+                // Load admin data
+                renderAdminItems();
+            } else {
+                showNotification('Invalid username or password', 'error');
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

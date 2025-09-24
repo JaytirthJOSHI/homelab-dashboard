@@ -4,6 +4,9 @@
 -- Enable Row Level Security
 ALTER DATABASE postgres SET "app.joshi1.com" = 'beacon-points';
 
+-- Add image_url column to existing shop_items table if it doesn't exist
+ALTER TABLE shop_items ADD COLUMN IF NOT EXISTS image_url TEXT;
+
 -- Create users table
 CREATE TABLE IF NOT EXISTS users (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -37,6 +40,7 @@ CREATE TABLE IF NOT EXISTS shop_items (
     description TEXT NOT NULL,
     price INTEGER NOT NULL,
     category VARCHAR(50) NOT NULL,
+    image_url TEXT,
     is_active BOOLEAN DEFAULT true,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -312,3 +316,7 @@ CREATE POLICY "Allow all operations on user_tasks" ON user_tasks FOR ALL USING (
 CREATE POLICY "Allow all operations on user_purchases" ON user_purchases FOR ALL USING (true);
 CREATE POLICY "Allow all operations on user_activity" ON user_activity FOR ALL USING (true);
 CREATE POLICY "Allow all operations on fulfillment_tasks" ON fulfillment_tasks FOR ALL USING (true);
+
+
+
+

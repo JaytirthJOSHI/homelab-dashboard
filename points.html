@@ -703,79 +703,6 @@
         <div class="admin-panel" id="admin-panel">
             <h2>🔧 Admin Panel</h2>
             
-            <!-- Task Management -->
-            <div style="margin-bottom: 40px;">
-                <h3 style="margin-bottom: 20px; color: #333; font-size: 1.5rem;">📝 Task Management</h3>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="new-task-title">New Task Title</label>
-                        <input type="text" id="new-task-title" placeholder="Enter task title">
-                    </div>
-                    <div class="form-group">
-                        <label for="new-task-points">Points</label>
-                        <input type="number" id="new-task-points" placeholder="Points to award">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="new-task-description">Description</label>
-                    <textarea id="new-task-description" placeholder="Enter task description"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="new-task-category">Category</label>
-                    <select id="new-task-category">
-                        <option value="chores">Chores</option>
-                        <option value="academic">Academic</option>
-                        <option value="health">Health</option>
-                        <option value="family">Family</option>
-                    </select>
-                </div>
-                <button class="btn btn-admin" onclick="addNewTask()">Add Task</button>
-                
-                <!-- Task List -->
-                <div style="margin-top: 30px;">
-                    <h4 style="margin-bottom: 15px; color: #666;">Current Tasks</h4>
-                    <div id="admin-tasks-list" style="max-height: 300px; overflow-y: auto; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px;">
-                        <!-- Tasks will be loaded here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Shop Management -->
-            <div style="margin-bottom: 40px;">
-                <h3 style="margin-bottom: 20px; color: #333; font-size: 1.5rem;">🛒 Shop Management</h3>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="new-item-title">New Item Title</label>
-                        <input type="text" id="new-item-title" placeholder="Enter item title">
-                    </div>
-                    <div class="form-group">
-                        <label for="new-item-price">Price (Points)</label>
-                        <input type="number" id="new-item-price" placeholder="Points required">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="new-item-description">Description</label>
-                    <textarea id="new-item-description" placeholder="Enter item description"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="new-item-category">Category</label>
-                    <select id="new-item-category">
-                        <option value="privileges">Privileges</option>
-                        <option value="purchases">Purchases</option>
-                        <option value="special">Special</option>
-                        <option value="social">Social</option>
-                    </select>
-                </div>
-                <button class="btn btn-admin" onclick="addNewItem()">Add Item</button>
-                
-                <!-- Shop Items List -->
-                <div style="margin-top: 30px;">
-                    <h4 style="margin-bottom: 15px; color: #666;">Current Shop Items</h4>
-                    <div id="admin-items-list" style="max-height: 300px; overflow-y: auto; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px;">
-                        <!-- Items will be loaded here -->
-                    </div>
-                </div>
-            </div>
 
             <!-- User Management -->
             <div style="margin-bottom: 40px;">
@@ -792,21 +719,17 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="complete-task-admin">Complete Task</label>
-                        <select id="complete-task-admin">
-                            <option value="">Select a task to complete</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
                         <label for="set-points">Set Points (can be negative)</label>
                         <input type="number" id="set-points" placeholder="Set exact points (can be negative)">
+                    </div>
+                    <div class="form-group">
+                        <!-- Empty div for spacing -->
                     </div>
                 </div>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <button class="btn btn-admin" onclick="addPoints()">Add Points</button>
                     <button class="btn btn-secondary" onclick="removePoints()" style="background: linear-gradient(135deg, #dc3545, #fd7e14);">Remove Points</button>
                     <button class="btn btn-secondary" onclick="setPoints()" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe);">Set Points</button>
-                    <button class="btn btn-secondary" onclick="completeTaskAdmin()">Complete Task</button>
                 </div>
             </div>
 
@@ -828,27 +751,26 @@
         </div>
 
         <div class="main-content">
-            <div class="section">
-                <h2>🎯 Earn Points</h2>
-                <div class="task-grid" id="tasks-container">
-                    <div class="empty-state">
-                        <h3>No tasks available</h3>
-                        <p>Use the admin panel to add tasks for earning points</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="section">
-                <h2>🛒 House Shop</h2>
-                <div class="shop-grid" id="shop-container">
-                    <div class="empty-state">
-                        <h3>Shop is empty</h3>
-                        <p>Use the admin panel to add items to the shop</p>
-                    </div>
+            <div class="section" style="text-align: center; padding: 60px 40px;">
+                <h2 style="font-size: 3rem; margin-bottom: 30px;">🎯 Points Dashboard</h2>
+                <p style="font-size: 1.3rem; color: #666; margin-bottom: 40px; line-height: 1.6;">
+                    Welcome to your points dashboard! Track your progress and manage your rewards.
+                </p>
+                <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                    <a href="shop.html" style="display: inline-block; padding: 20px 40px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-decoration: none; border-radius: 16px; font-weight: 700; font-size: 1.2rem; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+                        🛒 Visit Shop
+                    </a>
+                    <button onclick="toggleAdminPanel()" style="display: inline-block; padding: 20px 40px; background: linear-gradient(135deg, #28a745, #20c997); color: white; border: none; border-radius: 16px; font-weight: 700; font-size: 1.2rem; box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;">
+                        🔧 Admin Panel
+                    </button>
                 </div>
             </div>
         </div>
 
+
+        <div class="navigation" style="text-align: center; margin-bottom: 40px;">
+            <a href="shop.html" class="nav-btn" style="display: inline-block; padding: 15px 30px; margin: 0 10px; background: linear-gradient(135deg, #4ecdc4, #45b7d1); color: white; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 1.1rem; box-shadow: 0 8px 25px rgba(78, 205, 196, 0.3); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">🛒 Shop</a>
+        </div>
 
         <div class="action-buttons">
             <button class="btn btn-primary" onclick="refreshData()">🔄 Refresh</button>
@@ -871,49 +793,10 @@
     <div class="notification" id="notification"></div>
 
     <script>
-
-        // Supabase Configuration
-        const SUPABASE_URL = 'https://kvbdzfwaxvgaeqqpelxp.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2YmR6ZndheHZnYWVxcXBlbHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg0NjU3ODMsImV4cCI6MjA3NDA0MTc4M30.23oJ1kNG1YY_VJ9yrUQBMFCt59vFp1kXkpx3aNp4cMg';
-        
-        // Initialize Supabase client
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        // State management
-        let userData = {
-            id: null,
-            username: 'brother',
-            display_name: 'Brother',
-            points: 0,
-            totalEarned: 0,
-            totalSpent: 0,
-            tasksCompleted: 0,
-            itemsPurchased: 0,
-            completedTasks: new Set(),
-            purchasedItems: new Set()
-        };
-
-        let tasks = [];
-        let shopItems = [];
-        let fulfillmentTasks = [];
-        let isAdminLoggedIn = false;
-
-        // Initialize the app
-        async function init() {
-            try {
-                await loadUserData();
-                await loadUserProgress();
-                await loadTasks();
-                await loadShopItems();
-                await loadFulfillmentTasks();
-                renderTasks();
-                renderShopItems();
-                updateDisplay();
-            } catch (error) {
-                console.error('Error initializing app:', error);
-                showNotification('Error loading data. Please check your configuration.', 'error');
-            }
-        }
+        // Redirect to shop page after a brief delay
+        setTimeout(() => {
+            window.location.href = 'shop.html';
+        }, 1500);
 
         // Load user data from Supabase
         async function loadUserData() {
@@ -939,7 +822,6 @@
                         totalSpent: data.total_spent,
                         tasksCompleted: data.tasks_completed,
                         itemsPurchased: data.items_purchased,
-                        completedTasks: new Set(),
                         purchasedItems: new Set()
                     };
                 }
@@ -948,19 +830,9 @@
             }
         }
 
-        // Load completed tasks and purchased items
+        // Load purchased items
         async function loadUserProgress() {
             try {
-                // Load completed tasks
-                const { data: completedTasks, error: tasksError } = await supabase
-                    .from('user_tasks')
-                    .select('task_id')
-                    .eq('user_id', userData.id);
-
-                if (!tasksError && completedTasks) {
-                    userData.completedTasks = new Set(completedTasks.map(t => t.task_id));
-                }
-
                 // Load purchased items
                 const { data: purchasedItems, error: itemsError } = await supabase
                     .from('user_purchases')
@@ -975,45 +847,6 @@
             }
         }
 
-        // Load tasks from Supabase
-        async function loadTasks() {
-            try {
-                const { data, error } = await supabase
-                    .from('tasks')
-                    .select('*')
-                    .eq('is_active', true)
-                    .order('points', { ascending: true });
-
-                if (error) {
-                    console.error('Error loading tasks:', error);
-                    return;
-                }
-
-                tasks = data || [];
-            } catch (error) {
-                console.error('Error loading tasks:', error);
-            }
-        }
-
-        // Load shop items from Supabase
-        async function loadShopItems() {
-            try {
-                const { data, error } = await supabase
-                    .from('shop_items')
-                    .select('*')
-                    .eq('is_active', true)
-                    .order('price', { ascending: true });
-
-                if (error) {
-                    console.error('Error loading shop items:', error);
-                    return;
-                }
-
-                shopItems = data || [];
-            } catch (error) {
-                console.error('Error loading shop items:', error);
-            }
-        }
 
         // Load fulfillment tasks from Supabase
         async function loadFulfillmentTasks() {
@@ -1079,310 +912,8 @@
             }).join('');
         }
 
-        // Render tasks
-        function renderTasks() {
-            const container = document.getElementById('tasks-container');
-            
-            if (tasks.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <h3>No tasks available</h3>
-                        <p>Use the admin panel to add tasks for earning points</p>
-                    </div>
-                `;
-                return;
-            }
 
-            container.innerHTML = tasks.map(task => `
-                <div class="task-card ${userData.completedTasks.has(task.id) ? 'completed' : ''}" 
-                     onclick="completeTask('${task.id}')">
-                    <div class="task-header">
-                        <div class="task-title">${task.title}</div>
-                        <div class="task-points">+${task.points}</div>
-                    </div>
-                    <div class="task-description">${task.description}</div>
-                </div>
-            `).join('');
-        }
 
-        // Render shop items
-        function renderShopItems() {
-            const container = document.getElementById('shop-container');
-            
-            if (shopItems.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <h3>Shop is empty</h3>
-                        <p>Use the admin panel to add items to the shop</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = shopItems.map(item => {
-                const canAfford = userData.points >= item.price;
-                const alreadyPurchased = userData.purchasedItems.has(item.id);
-                return `
-                    <div class="shop-item ${canAfford ? 'affordable' : 'expensive'} ${alreadyPurchased ? 'purchased' : ''}" 
-                         onclick="purchaseItem('${item.id}')">
-                        <div class="shop-header">
-                            <div class="shop-title">${item.title}</div>
-                            <div class="shop-price">${item.price} pts</div>
-                        </div>
-                        <div class="shop-description">${item.description}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Complete a task (disabled for regular users)
-        async function completeTask(taskId) {
-            showNotification('Task completion is disabled. Only admin can complete tasks.', 'error');
-            return;
-        }
-
-        // Purchase an item
-        async function purchaseItem(itemId) {
-            if (userData.purchasedItems.has(itemId)) {
-                showNotification('Item already purchased!', 'error');
-                return;
-            }
-
-            const item = shopItems.find(i => i.id === itemId);
-            if (!item) {
-                showNotification('Item not found!', 'error');
-                return;
-            }
-
-            if (userData.points < item.price) {
-                showNotification('Not enough points!', 'error');
-                return;
-            }
-
-            try {
-                // Deduct points immediately
-                const { error: pointsError } = await supabase
-                    .from('users')
-                    .update({
-                        points: userData.points - item.price,
-                        total_spent: userData.totalSpent + item.price,
-                        items_purchased: userData.itemsPurchased + 1
-                    })
-                    .eq('id', userData.id);
-
-                if (pointsError) {
-                    console.error('Error updating points:', pointsError);
-                    showNotification('Error purchasing item. Please try again.', 'error');
-                    return;
-                }
-
-                // Add to fulfillment tasks
-                const fulfillmentTask = {
-                    id: `fulfill_${Date.now()}`,
-                    item_id: itemId,
-                    item_title: item.title,
-                    item_description: item.description,
-                    points_spent: item.price,
-                    status: 'pending', // pending, fulfilled, rejected
-                    created_at: new Date().toISOString()
-                };
-
-                const { error: fulfillmentError } = await supabase
-                    .from('fulfillment_tasks')
-                    .insert([fulfillmentTask]);
-
-                if (fulfillmentError) {
-                    console.error('Error creating fulfillment task:', fulfillmentError);
-                    // Continue anyway, points were already deducted
-                }
-
-                // Update local state
-                userData.purchasedItems.add(itemId);
-                userData.points -= item.price;
-                userData.totalSpent += item.price;
-                userData.itemsPurchased += 1;
-
-                // Add to points log
-                addToPointsLog('Shop Purchase', -item.price, item.title);
-
-                renderShopItems();
-                updateDisplay();
-                showNotification(`Purchased: ${item.title}! Fulfillment task created.`);
-            } catch (error) {
-                console.error('Error purchasing item:', error);
-                showNotification('Error purchasing item. Please try again.', 'error');
-            }
-        }
-
-        // Add new task (Admin function)
-        async function addNewTask() {
-            if (!isAdminLoggedIn) {
-                showNotification('Please login as admin first', 'error');
-                return;
-            }
-
-            const title = document.getElementById('new-task-title').value;
-            const description = document.getElementById('new-task-description').value;
-            const points = parseInt(document.getElementById('new-task-points').value);
-            const category = document.getElementById('new-task-category').value;
-
-            if (!title || !description || !points) {
-                showNotification('Please fill in all fields', 'error');
-                return;
-            }
-
-            try {
-                const { data, error } = await supabase
-                    .from('tasks')
-                    .insert([{
-                        id: title.toLowerCase().replace(/\s+/g, '_'),
-                        title: title,
-                        description: description,
-                        points: points,
-                        category: category
-                    }]);
-
-                if (error) {
-                    console.error('Error adding task:', error);
-                    showNotification('Error adding task. Please try again.', 'error');
-                    return;
-                }
-
-                // Clear form
-                document.getElementById('new-task-title').value = '';
-                document.getElementById('new-task-description').value = '';
-                document.getElementById('new-task-points').value = '';
-
-                // Reload tasks
-                await loadTasks();
-                renderTasks();
-                renderAdminTasks();
-                updateTaskSelect();
-                showNotification('Task added successfully!');
-            } catch (error) {
-                console.error('Error adding task:', error);
-                showNotification('Error adding task. Please try again.', 'error');
-            }
-        }
-
-        // Add new shop item (Admin function)
-        async function addNewItem() {
-            if (!isAdminLoggedIn) {
-                showNotification('Please login as admin first', 'error');
-                return;
-            }
-
-            const title = document.getElementById('new-item-title').value;
-            const description = document.getElementById('new-item-description').value;
-            const price = parseInt(document.getElementById('new-item-price').value);
-            const category = document.getElementById('new-item-category').value;
-
-            if (!title || !description || !price) {
-                showNotification('Please fill in all fields', 'error');
-                return;
-            }
-
-            try {
-                const { data, error } = await supabase
-                    .from('shop_items')
-                    .insert([{
-                        id: title.toLowerCase().replace(/\s+/g, '_'),
-                        title: title,
-                        description: description,
-                        price: price,
-                        category: category
-                    }]);
-
-                if (error) {
-                    console.error('Error adding item:', error);
-                    showNotification('Error adding item. Please try again.', 'error');
-                    return;
-                }
-
-                // Clear form
-                document.getElementById('new-item-title').value = '';
-                document.getElementById('new-item-description').value = '';
-                document.getElementById('new-item-price').value = '';
-
-                // Reload items
-                await loadShopItems();
-                renderShopItems();
-                renderAdminItems();
-                showNotification('Item added successfully!');
-            } catch (error) {
-                console.error('Error adding item:', error);
-                showNotification('Error adding item. Please try again.', 'error');
-            }
-        }
-
-        // Delete task (Admin function)
-        async function deleteTask(taskId) {
-            if (!isAdminLoggedIn) {
-                showNotification('Please login as admin first', 'error');
-                return;
-            }
-
-            if (!confirm('Are you sure you want to delete this task?')) {
-                return;
-            }
-
-            try {
-                const { error } = await supabase
-                    .from('tasks')
-                    .delete()
-                    .eq('id', taskId);
-
-                if (error) {
-                    console.error('Error deleting task:', error);
-                    showNotification('Error deleting task. Please try again.', 'error');
-                    return;
-                }
-
-                // Reload tasks
-                await loadTasks();
-                renderTasks();
-                renderAdminTasks();
-                updateTaskSelect();
-                showNotification('Task deleted successfully!');
-            } catch (error) {
-                console.error('Error deleting task:', error);
-                showNotification('Error deleting task. Please try again.', 'error');
-            }
-        }
-
-        // Delete shop item (Admin function)
-        async function deleteItem(itemId) {
-            if (!isAdminLoggedIn) {
-                showNotification('Please login as admin first', 'error');
-                return;
-            }
-
-            if (!confirm('Are you sure you want to delete this item?')) {
-                return;
-            }
-
-            try {
-                const { error } = await supabase
-                    .from('shop_items')
-                    .delete()
-                    .eq('id', itemId);
-
-                if (error) {
-                    console.error('Error deleting item:', error);
-                    showNotification('Error deleting item. Please try again.', 'error');
-                    return;
-                }
-
-                // Reload items
-                await loadShopItems();
-                renderShopItems();
-                renderAdminItems();
-                showNotification('Item deleted successfully!');
-            } catch (error) {
-                console.error('Error deleting item:', error);
-                showNotification('Error deleting item. Please try again.', 'error');
-            }
-        }
 
         // Add points (Admin function)
         async function addPoints() {
@@ -1532,110 +1063,7 @@
             }
         }
 
-        // Complete task as admin
-        async function completeTaskAdmin() {
-            if (!isAdminLoggedIn) {
-                showNotification('Please login as admin first', 'error');
-                return;
-            }
 
-            const taskId = document.getElementById('complete-task-admin').value;
-            if (!taskId) {
-                showNotification('Please select a task to complete', 'error');
-                return;
-            }
-
-            if (userData.completedTasks.has(taskId)) {
-                showNotification('Task already completed!', 'error');
-                return;
-            }
-
-            try {
-                const { data, error } = await supabase.rpc('complete_task', {
-                    p_user_id: userData.id,
-                    p_task_id: taskId
-                });
-
-                if (error) {
-                    console.error('Error completing task:', error);
-                    showNotification('Error completing task. Please try again.', 'error');
-                    return;
-                }
-
-                if (data.success) {
-                    // Update local state
-                    userData.completedTasks.add(taskId);
-                    userData.points = data.user_data.points;
-                    userData.totalEarned = data.user_data.total_earned;
-                    userData.tasksCompleted = data.user_data.tasks_completed;
-
-                    renderTasks();
-                    renderShopItems();
-                    renderAdminTasks();
-                    updateTaskSelect();
-                    updateDisplay();
-                    showNotification(`Task completed! +${data.points_earned} points!`);
-                } else {
-                    showNotification(data.error, 'error');
-                }
-            } catch (error) {
-                console.error('Error completing task:', error);
-                showNotification('Error completing task. Please try again.', 'error');
-            }
-        }
-
-        // Render admin tasks list
-        function renderAdminTasks() {
-            const container = document.getElementById('admin-tasks-list');
-            if (tasks.length === 0) {
-                container.innerHTML = '<p style="color: #999; text-align: center;">No tasks available</p>';
-                return;
-            }
-
-            container.innerHTML = tasks.map(task => `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; margin-bottom: 10px;">
-                    <div>
-                        <strong>${task.title}</strong> - ${task.points} pts
-                        <br><small style="color: #666;">${task.description}</small>
-                    </div>
-                    <button onclick="deleteTask('${task.id}')" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Delete</button>
-                </div>
-            `).join('');
-        }
-
-        // Render admin items list
-        function renderAdminItems() {
-            const container = document.getElementById('admin-items-list');
-            if (shopItems.length === 0) {
-                container.innerHTML = '<p style="color: #999; text-align: center;">No items available</p>';
-                return;
-            }
-
-            container.innerHTML = shopItems.map(item => `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; margin-bottom: 10px;">
-                    <div>
-                        <strong>${item.title}</strong> - ${item.price} pts
-                        <br><small style="color: #666;">${item.description}</small>
-                    </div>
-                    <button onclick="deleteItem('${item.id}')" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Delete</button>
-                </div>
-            `).join('');
-        }
-
-        // Update task select dropdown
-        function updateTaskSelect() {
-            const select = document.getElementById('complete-task-admin');
-            select.innerHTML = '<option value="">Select a task to complete</option>';
-            
-            tasks.forEach(task => {
-                if (!userData.completedTasks.has(task.id)) {
-                    const option = document.createElement('option');
-                    option.value = task.id;
-                    option.textContent = `${task.title} (+${task.points} pts)`;
-                    select.appendChild(option);
-                }
-            });
-        }
 
         // Update display
         function updateDisplay() {
@@ -1660,10 +1088,7 @@
             try {
                 await loadUserData();
                 await loadUserProgress();
-                await loadTasks();
-                await loadShopItems();
-                renderTasks();
-                renderShopItems();
+                await loadFulfillmentTasks();
                 updateDisplay();
                 showNotification('Data refreshed!');
             } catch (error) {
@@ -1696,12 +1121,6 @@
                         return;
                     }
 
-                    // Delete completed tasks
-                    const { error: tasksError } = await supabase
-                        .from('user_tasks')
-                        .delete()
-                        .eq('user_id', userData.id);
-
                     // Delete purchased items
                     const { error: itemsError } = await supabase
                         .from('user_purchases')
@@ -1714,11 +1133,8 @@
                     userData.totalSpent = 0;
                     userData.tasksCompleted = 0;
                     userData.itemsPurchased = 0;
-                    userData.completedTasks = new Set();
                     userData.purchasedItems = new Set();
                     
-                    renderTasks();
-                    renderShopItems();
                     updateDisplay();
                     showNotification('Progress reset!');
                 } catch (error) {
@@ -1739,11 +1155,8 @@
             
             // Load admin data when panel opens
             if (adminPanel.classList.contains('show')) {
-                renderAdminTasks();
-                renderAdminItems();
                 renderFulfillmentTasks();
                 renderPointsLog();
-                updateTaskSelect();
             }
         }
 
@@ -1770,11 +1183,8 @@
                 document.getElementById('admin-password').value = '';
                 
                 // Load admin data
-                renderAdminTasks();
-                renderAdminItems();
                 renderFulfillmentTasks();
                 renderPointsLog();
-                updateTaskSelect();
             } else {
                 showNotification('Invalid username or password', 'error');
             }
@@ -1902,7 +1312,6 @@
                 // Reload data
                 await loadFulfillmentTasks();
                 renderFulfillmentTasks();
-                renderShopItems();
                 updateDisplay();
                 showNotification('Task rejected and points refunded!');
             } catch (error) {
