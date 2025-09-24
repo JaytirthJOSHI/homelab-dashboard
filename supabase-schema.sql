@@ -98,34 +98,6 @@ ON CONFLICT (username) DO UPDATE SET
     total_earned = 0,
     updated_at = NOW();
 
--- Insert default tasks
-INSERT INTO tasks (id, title, description, points, category) VALUES
-('dishes', 'Wash Dishes', 'Clean all dishes and put them away', 10, 'chores'),
-('trash', 'Take Out Trash', 'Empty all trash cans and take to curb', 15, 'chores'),
-('laundry', 'Do Laundry', 'Wash, dry, and fold one load of laundry', 20, 'chores'),
-('homework', 'Complete Homework', 'Finish all assigned homework for the day', 25, 'academic'),
-('exercise', 'Exercise for 30 minutes', 'Do any form of exercise for at least 30 minutes', 30, 'health'),
-('help_sibling', 'Help Sibling', 'Help your sibling with their homework or chores', 35, 'family'),
-('clean_room', 'Clean Room', 'Clean and organize your bedroom', 15, 'chores'),
-('walk_dog', 'Walk the Dog', 'Take the dog for a 20-minute walk', 25, 'chores'),
-('cook_meal', 'Cook a Meal', 'Help prepare dinner for the family', 40, 'chores'),
-('garden_work', 'Garden Work', 'Help with yard work or gardening', 30, 'chores')
-ON CONFLICT (id) DO NOTHING;
-
--- Insert default shop items
-INSERT INTO shop_items (id, title, description, price, category) VALUES
-('extra_screen_time', 'Extra Screen Time', '30 minutes of additional screen time', 20, 'privileges'),
-('choose_dinner', 'Choose Dinner', 'Pick what the family has for dinner', 30, 'privileges'),
-('skip_chore', 'Skip One Chore', 'Skip any one chore for the day', 40, 'privileges'),
-('movie_night', 'Movie Night Choice', 'Choose the movie for family movie night', 50, 'privileges'),
-('sleepover', 'Sleepover with Friends', 'Have friends over for a sleepover', 100, 'special'),
-('new_game', 'New Video Game', 'Get a new video game (up to $30)', 150, 'purchases'),
-('late_bedtime', 'Late Bedtime', 'Stay up 1 hour past normal bedtime', 25, 'privileges'),
-('choose_snack', 'Choose Snack', 'Pick the family snack for movie night', 15, 'privileges'),
-('friend_visit', 'Friend Visit', 'Have a friend over for 2 hours', 60, 'social'),
-('new_book', 'New Book', 'Get a new book of your choice', 80, 'purchases')
-ON CONFLICT (id) DO NOTHING;
-
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_user_tasks_user_id ON user_tasks(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_tasks_task_id ON user_tasks(task_id);

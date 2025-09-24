@@ -613,25 +613,22 @@
                     <label for="new-item-description">Description</label>
                     <textarea id="new-item-description" placeholder="Enter item description"></textarea>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="new-item-category">Category</label>
-                        <select id="new-item-category">
-                            <option value="privileges">Privileges</option>
-                            <option value="purchases">Purchases</option>
-                            <option value="special">Special</option>
-                            <option value="social">Social</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="new-item-image">Image URL</label>
-                        <input type="url" id="new-item-image" placeholder="Enter image URL">
-                    </div>
-                </div>
                 <div class="form-group">
-                    <label for="image-upload">Or Upload Image</label>
-                    <input type="file" id="image-upload" accept="image/*" onchange="previewImage(event)">
-                    <img id="image-preview" class="image-preview" style="display: none;" alt="Image preview">
+                    <label for="new-item-category">Category</label>
+                    <select id="new-item-category">
+                        <option value="privileges">Privileges</option>
+                        <option value="purchases">Purchases</option>
+                        <option value="special">Special</option>
+                        <option value="social">Social</option>
+                    </select>
+                </div>
+                <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <strong>📸 Image System:</strong> Images are automatically assigned based on keywords in the title and description:
+                    <ul style="margin: 10px 0 0 20px; font-size: 0.9rem;">
+                        <li><strong>macbook, laptop, computer, gaming, gaming pc, pc</strong> → MacBook image</li>
+                        <li><strong>ipad, tablet, apple tablet</strong> → iPad image</li>
+                        <li>More keywords can be added as needed</li>
+                    </ul>
                 </div>
                 <button class="btn btn-admin" onclick="addNewItem()">Add Item</button>
                 
@@ -779,6 +776,32 @@
             }
         }
 
+        // Keyword to image mapping
+        const imageKeywords = {
+            'macbook': 'images/mac.jpeg',
+            'laptop': 'images/mac.jpeg',
+            'computer': 'images/mac.jpeg',
+            'gaming': 'images/mac.jpeg',
+            'gaming pc': 'images/mac.jpeg',
+            'pc': 'images/mac.jpeg',
+            'ipad': 'images/ipad.webp',
+            'tablet': 'images/ipad.webp',
+            'apple tablet': 'images/ipad.webp'
+        };
+
+        // Function to get image URL based on keywords
+        function getImageUrl(title, description) {
+            const text = (title + ' ' + description).toLowerCase();
+            
+            for (const [keyword, imageUrl] of Object.entries(imageKeywords)) {
+                if (text.includes(keyword)) {
+                    return imageUrl;
+                }
+            }
+            
+            return null;
+        }
+
         // Render shop items in card layout
         function renderShopItems() {
             const container = document.getElementById('shop-container');
@@ -796,7 +819,7 @@
             container.innerHTML = shopItems.map(item => {
                 const canAfford = userData.points >= item.price;
                 const alreadyPurchased = userData.purchasedItems.has(item.id);
-                const imageUrl = item.image_url || '';
+                const imageUrl = getImageUrl(item.title, item.description);
                 
                 return `
                     <div class="shop-card ${canAfford ? 'affordable' : 'expensive'} ${alreadyPurchased ? 'purchased' : ''}" 
@@ -908,7 +931,6 @@
             const description = document.getElementById('new-item-description').value;
             const price = parseInt(document.getElementById('new-item-price').value);
             const category = document.getElementById('new-item-category').value;
-            const imageUrl = document.getElementById('new-item-image').value;
 
             if (!title || !description || !price) {
                 showNotification('Please fill in all required fields', 'error');
@@ -923,8 +945,7 @@
                         title: title,
                         description: description,
                         price: price,
-                        category: category,
-                        image_url: imageUrl || null
+                        category: category
                     }]);
 
                 if (error) {
@@ -937,8 +958,6 @@
                 document.getElementById('new-item-title').value = '';
                 document.getElementById('new-item-description').value = '';
                 document.getElementById('new-item-price').value = '';
-                document.getElementById('new-item-image').value = '';
-                document.getElementById('image-preview').style.display = 'none';
 
                 // Reload items
                 await loadShopItems();
@@ -1009,21 +1028,6 @@
             `).join('');
         }
 
-        // Preview uploaded image
-        function previewImage(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('image-preview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                    // Set the URL input to the data URL
-                    document.getElementById('new-item-image').value = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
 
         // Update display
         function updateDisplay() {

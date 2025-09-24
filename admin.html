@@ -412,20 +412,22 @@
                     <label for="item-description">Description</label>
                     <textarea id="item-description" placeholder="Enter item description" style="width: 100%; padding: 15px; border: 2px solid #e9ecef; border-radius: 12px; font-size: 1rem; resize: vertical; min-height: 100px;"></textarea>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="item-category">Category</label>
-                        <select id="item-category" style="width: 100%; padding: 15px; border: 2px solid #e9ecef; border-radius: 12px; font-size: 1rem;">
-                            <option value="privileges">Privileges</option>
-                            <option value="purchases">Purchases</option>
-                            <option value="special">Special</option>
-                            <option value="social">Social</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="item-image">Image URL</label>
-                        <input type="url" id="item-image" placeholder="Enter image URL">
-                    </div>
+                <div class="form-group">
+                    <label for="item-category">Category</label>
+                    <select id="item-category" style="width: 100%; padding: 15px; border: 2px solid #e9ecef; border-radius: 12px; font-size: 1rem;">
+                        <option value="privileges">Privileges</option>
+                        <option value="purchases">Purchases</option>
+                        <option value="special">Special</option>
+                        <option value="social">Social</option>
+                    </select>
+                </div>
+                <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <strong>📸 Image System:</strong> Images are automatically assigned based on keywords in the title and description:
+                    <ul style="margin: 10px 0 0 20px; font-size: 0.9rem;">
+                        <li><strong>macbook, laptop, computer, gaming, gaming pc, pc</strong> → MacBook image</li>
+                        <li><strong>ipad, tablet, apple tablet</strong> → iPad image</li>
+                        <li>More keywords can be added as needed</li>
+                    </ul>
                 </div>
                 <div class="action-buttons">
                     <button class="btn btn-admin" onclick="addShopItem()">Add Shop Item</button>
@@ -476,6 +478,19 @@
         let fulfillmentTasks = [];
         let isAdminLoggedIn = false;
         let pointsLog = [];
+
+        // Keyword to image mapping
+        const imageKeywords = {
+            'macbook': 'images/mac.jpeg',
+            'laptop': 'images/mac.jpeg',
+            'computer': 'images/mac.jpeg',
+            'gaming': 'images/mac.jpeg',
+            'gaming pc': 'images/mac.jpeg',
+            'pc': 'images/mac.jpeg',
+            'ipad': 'images/ipad.webp',
+            'tablet': 'images/ipad.webp',
+            'apple tablet': 'images/ipad.webp'
+        };
 
         // Initialize the app
         async function init() {
@@ -771,7 +786,6 @@
             const description = document.getElementById('item-description').value;
             const price = parseInt(document.getElementById('item-price').value);
             const category = document.getElementById('item-category').value;
-            const imageUrl = document.getElementById('item-image').value;
 
             if (!title || !description || !price) {
                 showNotification('Please fill in all required fields', 'error');
@@ -786,8 +800,7 @@
                         title: title,
                         description: description,
                         price: price,
-                        category: category,
-                        image_url: imageUrl || null
+                        category: category
                     }]);
 
                 if (error) {
@@ -809,7 +822,6 @@
             document.getElementById('item-title').value = '';
             document.getElementById('item-description').value = '';
             document.getElementById('item-price').value = '';
-            document.getElementById('item-image').value = '';
             document.getElementById('item-category').value = 'privileges';
         }
 
