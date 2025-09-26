@@ -23,134 +23,198 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
 </head>
 <body>
-    <!-- Maintenance Mode Banner -->
-    <div class="maintenance-banner" id="maintenance-banner" style="display: none;">
-        <div class="maintenance-content">
-            <div class="maintenance-icon">🔧</div>
-            <div class="maintenance-text">
-                <h3>Planned Maintenance</h3>
-                <p>Services are currently down for scheduled maintenance. We'll be back soon!</p>
-            </div>
-            <button class="maintenance-toggle" onclick="toggleMaintenance()">×</button>
-        </div>
-    </div>
-
+    <!-- Skip Navigation Link for Screen Readers -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
     <div class="container">
-        <header class="header">
+        <header class="header" role="banner">
             <h1>🏠 Joshi Homelab</h1>
-            <div class="system-info">
+            <div class="system-info" role="region" aria-label="System status information">
                 <div class="stat">
                     <div class="stat-label">Services</div>
-                    <div class="stat-value" id="service-count">Loading...</div>
+                    <div class="stat-value" id="service-count" aria-live="polite" aria-label="Number of services">Loading...</div>
                 </div>
                 <div class="stat">
                     <div class="stat-label">Uptime</div>
-                    <div class="stat-value" id="uptime-percentage">--</div>
+                    <div class="stat-value" id="uptime-percentage" aria-live="polite" aria-label="System uptime percentage">--</div>
                 </div>
                 <div class="stat">
                     <div class="stat-label">Last Update</div>
-                    <div class="stat-value" id="last-update">--:--</div>
+                    <div class="stat-value" id="last-update" aria-live="polite" aria-label="Last system update time">--:--</div>
                 </div>
             </div>
-            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">🌙</button>
-            <button id="search-open" class="theme-toggle" aria-label="Search (⌘K)" title="Search (⌘K)">🔍</button>
-            <a href="about.html" class="theme-toggle" aria-label="About this dashboard" title="About this dashboard">ℹ️</a>
-            <div class="live-time" id="live-time">
-                <div class="time-display" id="current-time">--:--:--</div>
-                <div class="date-display" id="current-date">-- -- ----</div>
+            <div class="header-controls" role="toolbar" aria-label="Dashboard controls">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle between light and dark theme" title="Toggle theme (T)" accesskey="t">🌙</button>
+                <button id="search-open" class="theme-toggle" aria-label="Open search dialog" title="Search services (⌘K)" accesskey="k">🔍</button>
+                <a href="uptime.html" class="theme-toggle" aria-label="View uptime monitoring dashboard" title="Uptime Monitoring (U)" accesskey="u">📊</a>
+                <a href="about.html" class="theme-toggle" aria-label="View information about this dashboard" title="About this dashboard (A)" accesskey="a">ℹ️</a>
+            </div>
+            <div class="live-time" id="live-time" role="timer" aria-label="Current date and time">
+                <div class="time-display" id="current-time" aria-live="polite">--:--:--</div>
+                <div class="date-display" id="current-date" aria-live="polite">-- -- ----</div>
             </div>
         </header>
-
-        <div class="service-section">
-            <h2 class="section-title">Services</h2>
-            <div class="services-grid">
-                <a href="http://Joshivps1-ocp:5678" target="_blank" rel="noopener noreferrer" class="service-card">
-                    <div class="service-icon">
-                        <img src="assets/logos/n8n-logo.webp" alt="n8n" loading="eager" width="72" height="72">
+        <!-- Service Categories Container -->
+        <div class="service-categories" id="main-content" role="main" aria-label="Service categories and monitoring">
+            <!-- Core Services Category -->
+            <div class="service-category" data-category="core" role="region" aria-labelledby="core-category-title">
+                <div class="category-header" 
+                     onclick="toggleCategory('core')" 
+                     onkeydown="handleCategoryKeydown(event, 'core')"
+                     tabindex="0" 
+                     role="button" 
+                     aria-expanded="true" 
+                     aria-controls="core-content"
+                     aria-label="Core Services category, click to expand or collapse">
+                    <div class="category-title">
+                        <span class="category-icon" aria-hidden="true">🚀</span>
+                        <h2 id="core-category-title">Core Services</h2>
+                        <span class="category-count" id="core-count" aria-label="4 services in this category">4</span>
                     </div>
-                    <div class="service-info">
-                        <h3>n8n</h3>
-                        <p>Workflow Automation</p>
-                        <span class="service-port">:5678</span>
+                    <div class="category-toggle" aria-hidden="true">
+                        <span class="toggle-icon">▼</span>
                     </div>
-                </a>
-                <a href="https://Joshi1.com" target="_blank" rel="noopener noreferrer" class="service-card">
-                    <div class="service-icon">
-                        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #0ea5e9, #22c55e); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">🌐</div>
+                </div>
+                <div class="category-content" id="core-content" role="region" aria-labelledby="core-category-title">
+                    <div class="services-grid" role="list" aria-label="Core services list">
+                        <a href="http://Joshivps1-ocp:5678" 
+                           target="_blank" 
+                           rel="noopener noreferrer" 
+                           class="service-card"
+                           role="listitem"
+                           aria-label="n8n workflow automation service, running on port 5678"
+                           title="Open n8n workflow automation service">
+                            <div class="service-icon" aria-hidden="true">
+                                <img src="assets/logos/n8n-logo.webp" alt="" loading="eager" width="72" height="72">
+                            </div>
+                            <div class="service-info">
+                                <h3>n8n</h3>
+                                <p>Workflow Automation</p>
+                                <span class="service-port" aria-label="Port 5678">:5678</span>
+                            </div>
+                        </a>
+                        <a href="https://Joshi1.com" 
+                           target="_blank" 
+                           rel="noopener noreferrer" 
+                           class="service-card"
+                           role="listitem"
+                           aria-label="Joshi1.com personal website, publicly accessible"
+                           title="Open Joshi1.com personal website">
+                            <div class="service-icon" aria-hidden="true">
+                                <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #0ea5e9, #22c55e); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">🌐</div>
+                            </div>
+                            <div class="service-info">
+                                <h3>Joshi1.com</h3>
+                                <p>Personal website</p>
+                                <span class="service-port" aria-label="Publicly accessible">Public</span>
+                            </div>
+                        </a>
+                        <a href="http://Joshivps1-ocp:8000" 
+                           target="_blank" 
+                           rel="noopener noreferrer" 
+                           class="service-card is-down" 
+                           role="listitem"
+                           aria-label="Paperless-ngx document management system, currently down, running on port 8000"
+                           title="Paperless-ngx service is currently down"
+                           aria-disabled="true" 
+                           tabindex="-1">
+                            <div class="status-banner down" aria-label="Service is down">Down</div>
+                            <div class="service-icon" aria-hidden="true">
+                                <img src="assets/logos/paperless-ngx-logo.png" alt="" loading="lazy" width="72" height="72">
+                            </div>
+                            <div class="service-info">
+                                <h3>Paperless-ngx</h3>
+                                <p>Document Management System</p>
+                                <span class="service-port" aria-label="Port 8000">:8000</span>
+                            </div>
+                        </a>
+                        <a href="https://portainer.joshi1.com/#!/home" 
+                           target="_blank" 
+                           rel="noopener noreferrer" 
+                           class="service-card"
+                           role="listitem"
+                           aria-label="Portainer Docker container management, publicly accessible"
+                           title="Open Portainer Docker management interface">
+                            <div class="service-icon" aria-hidden="true">
+                                <img src="https://res.cloudinary.com/canonical/image/fetch/f_auto,q_auto,fl_sanitize,c_fill,w_200,h_200/https://api.charmhub.io/api/v1/media/download/charm_Owpj9CsDEMZwVtup3ZTxxs0FtyvDqb2o_icon_5cef79c2d18f67464f39c8f2cf2d7ebb815b0071f04d3ffbb94f49fddd3ab666.png" alt="" loading="lazy" width="72" height="72">
+                            </div>
+                            <div class="service-info">
+                                <h3>Portainer</h3>
+                                <p>Docker & container management</p>
+                                <span class="service-port" aria-label="Publicly accessible">Public</span>
+                            </div>
+                        </a>
                     </div>
-                    <div class="service-info">
-                        <h3>Joshi1.com</h3>
-                        <p>Personal website</p>
-                        <span class="service-port">Public</span>
-                    </div>
-                </a>
-                <a href="http://Joshivps1-ocp:8000" target="_blank" rel="noopener noreferrer" class="service-card is-down" aria-disabled="true" tabindex="-1">
-                    <div class="status-banner down">Down</div>
-                    <div class="service-icon">
-                        <img src="assets/logos/paperless-ngx-logo.png" alt="Paperless-ngx" loading="lazy" width="72" height="72">
-                    </div>
-                    <div class="service-info">
-                        <h3>Paperless-ngx</h3>
-                        <p>Document Management System</p>
-                        <span class="service-port">:8000</span>
-                    </div>
-                </a>
-                <a href="https://portainer.joshi1.com/#!/home" target="_blank" rel="noopener noreferrer" class="service-card">
-                    <div class="service-icon">
-                        <img src="https://res.cloudinary.com/canonical/image/fetch/f_auto,q_auto,fl_sanitize,c_fill,w_200,h_200/https://api.charmhub.io/api/v1/media/download/charm_Owpj9CsDEMZwVtup3ZTxxs0FtyvDqb2o_icon_5cef79c2d18f67464f39c8f2cf2d7ebb815b0071f04d3ffbb94f49fddd3ab666.png" alt="Portainer" loading="lazy" width="72" height="72">
-                    </div>
-                    <div class="service-info">
-                        <h3>Portainer</h3>
-                        <p>Docker & container management</p>
-                        <span class="service-port">Public</span>
-                    </div>
-                </a>
+                </div>
             </div>
-        </div>
 
-        <div class="analytics-section">
-            <h2 class="section-title">Analytics & Monitoring</h2>
-            <div class="analytics-grid">
-                <a href="http://Joshivps1-ocp:3001" target="_blank" rel="noopener noreferrer" class="analytics-card">
-                    <div class="analytics-icon">
-                        <img src="assets/logos/uptime-kuma-logo.png" alt="Uptime Kuma" loading="lazy" width="72" height="72">
+            <!-- Monitoring stuff :))) -->
+            <div class="service-category" data-category="monitoring">
+                <div class="category-header" onclick="toggleCategory('monitoring')">
+                    <div class="category-title">
+                        <span class="category-icon">📊</span>
+                        <h2>Monitoring & Analytics</h2>
+                        <span class="category-count" id="monitoring-count">2</span>
                     </div>
-                    <div class="analytics-info">
-                        <h3>Uptime Kuma</h3>
-                        <p>Service uptime monitoring and statistics</p>
+                    <div class="category-toggle">
+                        <span class="toggle-icon">▼</span>
                     </div>
-                </a>
-                <a href="https://login.tailscale.com/admin/machines" target="_blank" rel="noopener noreferrer" class="analytics-card">
-                    <div class="analytics-icon">
-                        <img src="assets/logos/tailscale-logo.png" alt="Tailscale" loading="lazy" width="72" height="72">
+                </div>
+                <div class="category-content" id="monitoring-content">
+                    <div class="analytics-grid">
+                        <a href="http://Joshivps1-ocp:3001" target="_blank" rel="noopener noreferrer" class="analytics-card">
+                            <div class="analytics-icon">
+                                <img src="assets/logos/uptime-kuma-logo.png" alt="Uptime Kuma" loading="lazy" width="72" height="72">
+                            </div>
+                            <div class="analytics-info">
+                                <h3>Uptime Kuma</h3>
+                                <p>Service uptime monitoring and statistics</p>
+                            </div>
+                        </a>
+                        <a href="https://login.tailscale.com/admin/machines" target="_blank" rel="noopener noreferrer" class="analytics-card">
+                            <div class="analytics-icon">
+                                <img src="assets/logos/tailscale-logo.png" alt="Tailscale" loading="lazy" width="72" height="72">
+                            </div>
+                            <div class="analytics-info">
+                                <h3>Tailscale</h3>
+                                <p>Zero Trust Network Access & Device Management</p>
+                            </div>
+                        </a>
                     </div>
-                    <div class="analytics-info">
-                        <h3>Tailscale</h3>
-                        <p>Zero Trust Network Access & Device Management</p>
-                    </div>
-                </a>
+                </div>
             </div>
-        </div>
 
-        <div class="family-section">
-            <h2 class="section-title">Family Apps</h2>
-            <div class="services-grid">
-                <a href="shop.html" class="service-card">
-                    <div class="service-icon">
-                        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #ff6b6b, #ffa500); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">🏆</div>
+            <!-- Family Apps Category -->
+            <div class="service-category" data-category="family">
+                <div class="category-header" onclick="toggleCategory('family')">
+                    <div class="category-title">
+                        <span class="category-icon">👨‍👩‍👧‍👦</span>
+                        <h2>Family Apps</h2>
+                        <span class="category-count" id="family-count">1</span>
                     </div>
-                    <div class="service-info">
-                        <h3>Beacon Points</h3>
-                        <p>Earn and spend points in the house shop</p>
-                        <span class="service-port">Family</span>
+                    <div class="category-toggle">
+                        <span class="toggle-icon">▼</span>
                     </div>
-                </a>
+                </div>
+                <div class="category-content" id="family-content">
+                    <div class="services-grid">
+                        <a href="shop.html" class="service-card">
+                            <div class="service-icon">
+                                <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #ff6b6b, #ffa500); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">🏆</div>
+                            </div>
+                            <div class="service-info">
+                                <h3>Beacon Points</h3>
+                                <p>Earn and spend points in the house shop</p>
+                                <span class="service-port">Family</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Enhanced security measures (less aggressive)
         (function() {
             // Only disable right-click on sensitive elements
             document.addEventListener('contextmenu', function(e) {
@@ -469,6 +533,13 @@
         // Check maintenance mode on page load
         checkMaintenanceMode();
         
+        // Initialize accessibility features
+        manageFocus();
+        
+        // Initialize categories
+        initializeCategories();
+        updateServiceCounts();
+        
         // Set initial values
         updateLiveTime();
         updateTimestamp();
@@ -517,6 +588,130 @@
             });
         }
         
+        // ========================================
+        // ACCESSIBILITY FUNCTIONS
+        // ========================================
+        
+        // Handle keyboard navigation for category headers
+        function handleCategoryKeydown(event, categoryId) {
+            // Allow Enter and Space to toggle categories
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                toggleCategory(categoryId);
+            }
+        }
+        
+        // Announce status changes to screen readers
+        function announceStatusChange(message) {
+            const announcement = document.createElement('div');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.setAttribute('aria-atomic', 'true');
+            announcement.className = 'sr-only';
+            announcement.textContent = message;
+            document.body.appendChild(announcement);
+            
+            // Remove after announcement
+            setTimeout(() => {
+                document.body.removeChild(announcement);
+            }, 1000);
+        }
+        
+        // Focus management for better keyboard navigation
+        function manageFocus() {
+            // Add focus indicators for keyboard users
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Tab') {
+                    document.body.classList.add('keyboard-navigation');
+                }
+            });
+            
+            // Remove focus indicators for mouse users
+            document.addEventListener('mousedown', function() {
+                document.body.classList.remove('keyboard-navigation');
+            });
+        }
+
+        // ========================================
+        // SERVICE CATEGORY MANAGEMENT
+        // ========================================
+        
+        function toggleCategory(categoryId) {
+            const content = document.getElementById(`${categoryId}-content`);
+            const toggleIcon = document.querySelector(`[data-category="${categoryId}"] .toggle-icon`);
+            const category = document.querySelector(`[data-category="${categoryId}"]`);
+            const header = category.querySelector('.category-header');
+            
+            if (content.style.display === 'none' || content.style.display === '') {
+                // Expand category
+                content.style.display = 'block';
+                toggleIcon.textContent = '▼';
+                category.classList.add('expanded');
+                category.classList.remove('collapsed');
+                header.setAttribute('aria-expanded', 'true');
+                
+                // Store preference
+                localStorage.setItem(`category-${categoryId}-expanded`, 'true');
+                
+                // Announce to screen readers
+                const categoryName = category.querySelector('h2').textContent;
+                announceStatusChange(`${categoryName} category expanded`);
+            } else {
+                // Collapse category
+                content.style.display = 'none';
+                toggleIcon.textContent = '▶';
+                category.classList.add('collapsed');
+                category.classList.remove('expanded');
+                header.setAttribute('aria-expanded', 'false');
+                
+                // Store preference
+                localStorage.setItem(`category-${categoryId}-expanded`, 'false');
+                
+                // Announce to screen readers
+                const categoryName = category.querySelector('h2').textContent;
+                announceStatusChange(`${categoryName} category collapsed`);
+            }
+        }
+
+
+
+
+
+        // Initialize category states from localStorage
+        function initializeCategories() {
+            const categories = ['core', 'monitoring', 'family'];
+            categories.forEach(categoryId => {
+                const isExpanded = localStorage.getItem(`category-${categoryId}-expanded`);
+                const content = document.getElementById(`${categoryId}-content`);
+                const toggleIcon = document.querySelector(`[data-category="${categoryId}"] .toggle-icon`);
+                const category = document.querySelector(`[data-category="${categoryId}"]`);
+                
+                // Default to expanded for first time users
+                if (isExpanded === null) {
+                    content.style.display = 'block';
+                    toggleIcon.textContent = '▼';
+                    category.classList.add('expanded');
+                } else if (isExpanded === 'true') {
+                    content.style.display = 'block';
+                    toggleIcon.textContent = '▼';
+                    category.classList.add('expanded');
+                } else {
+                    content.style.display = 'none';
+                    toggleIcon.textContent = '▶';
+                    category.classList.add('collapsed');
+                }
+            });
+        }
+
+        function updateServiceCounts() {
+            const coreCount = document.querySelectorAll('[data-category="core"] .service-card').length;
+            const monitoringCount = document.querySelectorAll('[data-category="monitoring"] .analytics-card').length;
+            const familyCount = document.querySelectorAll('[data-category="family"] .service-card').length;
+            
+            document.getElementById('core-count').textContent = coreCount;
+            document.getElementById('monitoring-count').textContent = monitoringCount;
+            document.getElementById('family-count').textContent = familyCount;
+        }
+
         // Console warning
         console.log('%cSTOP!', 'color: red; font-size: 50px; font-weight: bold;');
         console.log('%cThis is a browser feature intended for developers. Unauthorized access is prohibited.', 'color: red; font-size: 16px;');

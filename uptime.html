@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uptime Monitoring - Joshi Homelab</title>
+    <meta name="description" content="Real-time uptime monitoring and service status">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="uptime.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Performance optimizations -->
+    <link rel="dns-prefetch" href="//Joshivps1-ocp">
+    <link rel="dns-prefetch" href="//Joshi1.com">
+    <link rel="dns-prefetch" href="//login.tailscale.com">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="style.css" as="style">
+    <link rel="preload" href="uptime.css" as="style">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
+</head>
+<body>
+    <!-- Maintenance Mode Banner -->
+    <div class="maintenance-banner" id="maintenance-banner" style="display: none;">
+        <div class="maintenance-content">
+            <div class="maintenance-icon">🔧</div>
+            <div class="maintenance-text">
+                <h3>Planned Maintenance</h3>
+                <p>Services are currently down for scheduled maintenance. We'll be back soon!</p>
+            </div>
+            <button class="maintenance-toggle" onclick="toggleMaintenance()">×</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Skip Navigation Link for Screen Readers -->
+        <a href="#main-content" class="skip-link">Skip to main content</a>
+        
+        <header class="header" role="banner">
+            <h1>📊 Uptime Monitoring</h1>
+            <div class="system-info">
+                <div class="stat">
+                    <div class="stat-label">Overall Uptime</div>
+                    <div class="stat-value" id="overall-uptime">Loading...</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Services Up</div>
+                    <div class="stat-value" id="services-up">--</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Last Check</div>
+                    <div class="stat-value" id="last-check">--:--</div>
+                </div>
+            </div>
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">🌙</button>
+            <button id="search-open" class="theme-toggle" aria-label="Search (⌘K)" title="Search (⌘K)">🔍</button>
+            <a href="index.html" class="theme-toggle" aria-label="Back to Dashboard" title="Back to Dashboard">🏠</a>
+            <div class="live-time" id="live-time">
+                <div class="time-display" id="current-time">--:--:--</div>
+                <div class="date-display" id="current-date">-- -- ----</div>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <div class="uptime-nav">
+            <button class="nav-tab active" onclick="switchTab('overview')" id="overview-tab">
+                <span class="tab-icon">📊</span>
+                <span class="tab-text">Overview</span>
+            </button>
+            <button class="nav-tab" onclick="switchTab('detailed')" id="detailed-tab">
+                <span class="tab-icon">📈</span>
+                <span class="tab-text">Detailed View</span>
+            </button>
+            <button class="nav-tab" onclick="switchTab('history')" id="history-tab">
+                <span class="tab-icon">📅</span>
+                <span class="tab-text">History</span>
+            </button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="main-content" role="main" aria-label="Uptime monitoring content">
+            <!-- Overview Tab -->
+            <div class="tab-panel active" id="overview-panel">
+                <div class="uptime-summary">
+                    <div class="summary-card">
+                        <div class="summary-icon">✅</div>
+                        <div class="summary-content">
+                            <h3>All Systems Operational</h3>
+                            <p>All monitored services are running normally</p>
+                        </div>
+                    </div>
+                    <div class="summary-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" id="total-services">0</span>
+                            <span class="stat-label">Total Services</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="uptime-percentage">0%</span>
+                            <span class="stat-label">Uptime</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="avg-response">0ms</span>
+                            <span class="stat-label">Avg Response</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Embedded Uptime Kuma Dashboard -->
+                <div class="uptime-embed-container">
+                    <div class="embed-header">
+                        <h3>📊 Uptime Kuma Dashboard</h3>
+                        <div class="embed-controls">
+                            <button class="embed-btn" onclick="refreshUptimeDashboard()" title="Refresh Dashboard">
+                                <span>🔄</span>
+                            </button>
+                            <button class="embed-btn" onclick="toggleFullscreenMode()" title="Toggle Fullscreen">
+                                <span>⛶</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="uptime-iframe-container">
+                        <iframe 
+                            id="uptime-iframe"
+                            src="https://uptime.joshi1.com/status/dashbord"
+                            title="Uptime Kuma Dashboard"
+                            frameborder="0"
+                            allowfullscreen>
+                        </iframe>
+                        <div class="iframe-loading" id="iframe-loading">
+                            <div class="loading-spinner"></div>
+                            <p>Loading Uptime Kuma Dashboard...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed View Tab -->
+            <div class="tab-panel" id="detailed-panel">
+                <div class="detailed-monitoring">
+                    <h3>📈 Detailed Service Monitoring</h3>
+                    <div class="service-details" id="service-details">
+                        <!-- Service details will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div class="tab-panel" id="history-panel">
+                <div class="uptime-history">
+                    <h3>📅 Uptime History</h3>
+                    <div class="history-filters">
+                        <select id="time-range" onchange="updateHistoryTimeRange()">
+                            <option value="24h">Last 24 Hours</option>
+                            <option value="7d">Last 7 Days</option>
+                            <option value="30d">Last 30 Days</option>
+                            <option value="90d">Last 90 Days</option>
+                        </select>
+                    </div>
+                    <div class="history-chart" id="history-chart">
+                        <div class="chart-placeholder">
+                            <div class="chart-icon">📊</div>
+                            <p>Historical data will be displayed here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Modal (reused from main dashboard) -->
+    <div id="search-overlay" class="modal-overlay" style="display: none;" aria-hidden="true">
+        <div class="modal search-modal" role="dialog" aria-modal="true" aria-labelledby="search-title">
+            <div class="search-header">
+                <input id="search-input" type="text" class="search-input" placeholder="Search services (⌘K)" aria-label="Search services" autocomplete="off" spellcheck="false" />
+            </div>
+            <div class="search-body">
+                <div id="search-results" class="search-results" role="listbox"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Maintenance Toggle Button (Bottom) -->
+    <div class="maintenance-toggle-bottom">
+        <button class="maintenance-btn-bottom" onclick="toggleMaintenanceMode()" title="Toggle Maintenance Mode">
+            <span class="maintenance-icon">🔧</span>
+            <span class="maintenance-text">Maintenance</span>
+        </button>
+    </div>
+
+    <script>
+        // ========================================
+        // HOMELAB DASHBOARD - UPTIME MONITORING :)))))))
+        // ========================================
+        // This script handles the uptime monitoring page functionality
+        // including tab switching, iframe management, and theme handling :)    
+        
+        // Security and protection measures
+        (function setupSecurity() {
+            // Prevent right-click on non-input elements (but allow on forms)
+            document.addEventListener('contextmenu', function(event) {
+                const isInputElement = event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA';
+                if (!isInputElement) {
+                    event.preventDefault();
+                    console.log('🔒 This is a private homelab dashboard. Please respect the system.');
+                    return false;
+                }
+            });
+            
+            // Block developer tools shortcuts in production
+            document.addEventListener('keydown', function(event) {
+                const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                if (!isLocalhost) {
+                    const isDevToolsShortcut = event.key === 'F12' || 
+                        (event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'J')) ||
+                        (event.ctrlKey && event.key === 'U');
+                    
+                    if (isDevToolsShortcut) {
+                        event.preventDefault();
+                        console.log('🔒 Developer tools are restricted on this dashboard.');
+                        return false;
+                    }
+                }
+            });
+            
+            // Monitor for developer tools being opened
+            let devToolsState = { isOpen: false };
+            const windowSizeThreshold = 160; // pixels difference to detect dev tools
+            
+            setInterval(function checkForDevTools() {
+                const heightDifference = window.outerHeight - window.innerHeight;
+                const widthDifference = window.outerWidth - window.innerWidth;
+                const devToolsDetected = heightDifference > windowSizeThreshold || widthDifference > windowSizeThreshold;
+                
+                if (devToolsDetected && !devToolsState.isOpen) {
+                    devToolsState.isOpen = true;
+                    console.log('🔒 Developer tools detected. This is a private homelab dashboard.');
+                } else if (!devToolsDetected) {
+                    devToolsState.isOpen = false;
+                }
+            }, 1000); // Check every second
+        })();
+
+        // ========================================
+        // TIME AND DATE FUNCTIONS
+        // ========================================
+        
+        function updateLiveTime() {
+            const currentTime = new Date();
+            
+            // Format time as HH:MM:SS (24-hour format)
+            const timeOptions = {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            const formattedTime = currentTime.toLocaleTimeString('en-US', timeOptions);
+            document.getElementById('current-time').textContent = formattedTime;
+            
+            // Format date as "Mon Jan 15, 2024"
+            const dateOptions = {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            };
+            const formattedDate = currentTime.toLocaleDateString('en-US', dateOptions);
+            document.getElementById('current-date').textContent = formattedDate;
+        }
+
+        function updateLastCheckTime() {
+            const currentTime = new Date();
+            const timeString = currentTime.toLocaleTimeString();
+            document.getElementById('last-check').textContent = timeString;
+        }
+
+        // ========================================
+        // TAB NAVIGATION FUNCTIONS
+        // ========================================
+        
+        function switchTab(tabName) {
+            // Hide all tabs and remove active state
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            
+            // Show selected tab and panel
+            const selectedTab = document.getElementById(`${tabName}-tab`);
+            const selectedPanel = document.getElementById(`${tabName}-panel`);
+            
+            if (selectedTab && selectedPanel) {
+                selectedTab.classList.add('active');
+                selectedPanel.classList.add('active');
+            }
+        }
+
+        // ========================================
+        // UPTIME DASHBOARD FUNCTIONS
+        // ========================================
+        
+        function refreshUptimeDashboard() {
+            const uptimeIframe = document.getElementById('uptime-iframe');
+            const loadingIndicator = document.getElementById('iframe-loading');
+            
+            // Show loading spinner
+            loadingIndicator.style.display = 'flex';
+            
+            // Reload the iframe by refreshing its source
+            uptimeIframe.src = uptimeIframe.src;
+        }
+
+        function toggleFullscreenMode() {
+            const iframeContainer = document.querySelector('.uptime-iframe-container');
+            
+            if (!document.fullscreenElement) {
+                // Enter fullscreen mode
+                iframeContainer.requestFullscreen().catch(error => {
+                    console.log('Could not enter fullscreen mode:', error);
+                });
+            } else {
+                // Exit fullscreen mode
+                document.exitFullscreen().catch(error => {
+                    console.log('Could not exit fullscreen mode:', error);
+                });
+            }
+        }
+
+        function updateHistoryTimeRange() {
+            const selectedRange = document.getElementById('time-range').value;
+            console.log('📅 History range changed to:', selectedRange);
+            // TODO: Integrate with your monitoring API to fetch historical data
+        }
+
+        // ========================================
+        // MAINTENANCE MODE FUNCTIONS
+        // ========================================
+        
+        function toggleMaintenanceMode() {
+            const maintenanceBanner = document.getElementById('maintenance-banner');
+            const isCurrentlyVisible = maintenanceBanner.style.display !== 'none';
+            
+            if (isCurrentlyVisible) {
+                // Hide maintenance banner
+                maintenanceBanner.style.display = 'none';
+                localStorage.setItem('maintenanceMode', 'false');
+                console.log('🔧 Maintenance mode disabled');
+            } else {
+                // Show maintenance banner
+                maintenanceBanner.style.display = 'block';
+                localStorage.setItem('maintenanceMode', 'true');
+                console.log('🔧 Maintenance mode enabled');
+            }
+        }
+
+        function checkMaintenanceModeOnLoad() {
+            const maintenanceModeEnabled = localStorage.getItem('maintenanceMode') === 'true';
+            const maintenanceBanner = document.getElementById('maintenance-banner');
+            
+            if (maintenanceModeEnabled) {
+                maintenanceBanner.style.display = 'block';
+                console.log('🔧 Maintenance mode is currently active');
+            }
+        }
+
+        // ========================================
+        // IFRAME MANAGEMENT FUNCTIONS
+        // ========================================
+        
+        function handleUptimeIframeLoad() {
+            const loadingIndicator = document.getElementById('iframe-loading');
+            loadingIndicator.style.display = 'none';
+            console.log('📊 Uptime Kuma dashboard loaded successfully');
+        }
+
+        // ========================================
+        // PAGE INITIALIZATION
+        // ========================================
+        
+        function initializeUptimePage() {
+            console.log('🚀 Initializing uptime monitoring page...');
+            
+            // Check if maintenance mode is enabled
+            checkMaintenanceModeOnLoad();
+            
+            // Set up initial time display
+            updateLiveTime();
+            updateLastCheckTime();
+            
+            // Set up iframe load handler
+            const uptimeIframe = document.getElementById('uptime-iframe');
+            if (uptimeIframe) {
+                uptimeIframe.addEventListener('load', handleUptimeIframeLoad);
+            }
+            
+            // Start live time updates (every second)
+            setInterval(updateLiveTime, 1000);
+            
+            // Start last check time updates (every minute)
+            setInterval(updateLastCheckTime, 60000);
+            
+            console.log('✅ Uptime monitoring page initialized successfully');
+        }
+
+        // Theme handling (inherit from main dashboard)
+        (function() {
+            const storageKey = 'theme-preference';
+            const getSystemPreference = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            const getPreference = () => localStorage.getItem(storageKey) || getSystemPreference();
+            
+            const applyTheme = (theme) => {
+                const isLight = theme === 'light';
+                document.documentElement.setAttribute('data-theme', isLight ? 'light' : 'dark');
+                
+                // Enhanced button animation
+                const btn = document.getElementById('theme-toggle');
+                if (btn) {
+                    btn.style.transform = 'rotate(180deg)';
+                    setTimeout(() => {
+                        btn.textContent = isLight ? '☀️' : '🌙';
+                        btn.style.transform = 'rotate(0deg)';
+                    }, 150);
+                }
+            };
+
+            // Initialize with smooth transition
+            const initialTheme = getPreference();
+            applyTheme(initialTheme);
+
+            // Enhanced toggle with haptic feedback
+            const toggleBtn = document.getElementById('theme-toggle');
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Haptic feedback on mobile
+                    if ('vibrate' in navigator) {
+                        navigator.vibrate(50);
+                    }
+                    
+                    const current = document.documentElement.getAttribute('data-theme');
+                    const next = current === 'light' ? 'dark' : 'light';
+                    localStorage.setItem(storageKey, next);
+                    applyTheme(next);
+                });
+            }
+
+            // Respond to system changes with smooth transition
+            if (window.matchMedia) {
+                const media = window.matchMedia('(prefers-color-scheme: light)');
+                media.addEventListener && media.addEventListener('change', function() {
+                    if (!localStorage.getItem(storageKey)) {
+                        applyTheme(getSystemPreference());
+                    }
+                });
+            }
+        })();
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

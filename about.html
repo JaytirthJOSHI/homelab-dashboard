@@ -362,9 +362,12 @@
                 <h3>🚀 Core Services</h3>
                 <ul>
                     <li><strong>n8n</strong> (Port 5678) — Workflow automation platform</li>
-                    <li><strong>Paperless-ngx</strong> (Port 8000) — Document management system</li>
+                    <li><strong>Paperless-ngx</strong> (Port 8000) — Document management system, i think i took this down useless</li>
                     <li><strong>Uptime Kuma</strong> (Port 3001) — Service monitoring and uptime tracking</li>
                     <li><strong>Beacon Points</strong> — Household points and rewards system</li>
+                    <li><strong>Plex</strong> (Port 32400) — Media server jk jk i dont have this</li>
+                    <li><strong>Portainer</strong> (Port 9000) — Docker container management</li>
+                    <li><strong>cloudflared</strong> (Port 8888) — Tunning stuff like cloudflare tunnel</li>
                 </ul>
 
                 <h3>🌐 External Services</h3>
@@ -448,7 +451,7 @@
                 
                 <h3>📊 Monitoring Stack</h3>
                 <ul>
-                    <li><strong>Uptime Kuma</strong> — Service uptime and response time monitoring</li>
+                    <li><strong>Uptime Kuma</strong> — Service uptime and response time monitoring and you need to use this! its fireeeeee</li>
                     <li><strong>Docker Swarm</strong> — Container health and resource usage</li>
                     <li><strong>Tailscale</strong> — Network connectivity and device status</li>
                     <li><strong>Custom Dashboard</strong> — Aggregated metrics and alerts</li>
@@ -473,36 +476,36 @@
 
         <!-- Infrastructure Diagram -->
         <div class="infrastructure-diagram">
-            <h2 style="margin-top: 0; margin-bottom: 24px;">🏗️ Infrastructure Architecture</h2>
+            <h2 style="margin-top: 0; margin-bottom: 24px;">🏗️ Infrastructure Architecture this is the best part of the homelab</h2>
             <div class="diagram-content">
                 <div class="node">
                     <h4>🏠 MacBook Pro (Local)</h4>
-                    <p>2 CPU cores, 8 GB RAM<br>Primary services & storage</p>
+                    <p>2 CPU cores, 8 GB RAM (yeah it is old)<br>Primary services & storage w 4 TB of storage and i hate invidia bc of the gpu not working on linux and the fact that it doesnt work on linux is just ugh</p>
                 </div>
                 
                 <div class="connection-line"></div>
                 
                 <div class="node">
-                    <h4>🌐 Tailscale Mesh Network</h4>
-                    <p>WireGuard VPN<br>Zero-trust connectivity</p>
+                    <h4>🌐 Tailscale Mesh Network this is my favorite part connes to all the nodes that i have around the world just makes sense to have a mesh network like this</h4>
+                    <p>WireGuard VPN<br>Zero-trust connectivity and its fireeeeee</p>
                 </div>
                 
                 <div class="connection-line"></div>
                 
                 <div class="node">
                     <h4>☁️ Azure B1</h4>
-                    <p>Burstable VM<br>Secondary services</p>
+                    <p>Burstable VM<br>Secondary services also on the free tier but this is ass bc b1 is the worst vm gets talken down all the time to earn credits</p>
                 </div>
                 
                 <div style="display: flex; gap: 32px; margin-top: 16px;">
                     <div class="node">
                         <h4>☁️ Oracle e2.micro #1</h4>
-                        <p>1 CPU, 1 GB RAM<br>Always Free tier</p>
+                        <p>1 CPU, 1 GB RAM<br>Always Free tier is fireeeeee</p>
                     </div>
                     
                     <div class="node">
                         <h4>☁️ Oracle e2.micro #2</h4>
-                        <p>1 CPU, 1 GB RAM<br>Always Free tier</p>
+                        <p>1 CPU, 1 GB RAM<br>Always Free tier is fireeeeee and freeeeeee and i hate oracle but ty for the free tier</p>
                     </div>
                 </div>
             </div>
@@ -516,7 +519,7 @@
 
         <!-- Footer -->
         <div style="text-align: center; margin-top: 40px; padding: 20px; color: var(--muted);">
-            <p>Built with ❤️ for the homelab community</p>
+            <p>Built for fun for the homelab community!!!! you wont have logins to any of the services but you can see the status of the services and the uptime of the services lol</p>
             <p style="font-size: 0.9rem; margin-top: 8px;">
                 Last updated: <span id="last-updated"></span>
             </p>
