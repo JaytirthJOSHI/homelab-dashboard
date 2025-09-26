@@ -26,6 +26,18 @@
     <!-- Skip Navigation Link for Screen Readers -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
     
+    <!-- Hack Club Banner -->
+    <div id="hack-club-banner" class="hack-club-banner" style="display: none;" role="banner" aria-label="Hack Club Summer of Making banner">
+        <div class="banner-content">
+            <div class="banner-icon">🚀</div>
+            <div class="banner-text">
+                <h3 class="banner-title">Why You Show Woe For Me</h3>
+                <p class="banner-description">Welcome from Hack Club Summer of Making! This homelab dashboard is pretty cool, don't you think?</p>
+            </div>
+            <button class="banner-close" onclick="dismissHackClubBanner()" aria-label="Close Hack Club banner" title="Close banner">×</button>
+        </div>
+    </div>
+
     <div class="container">
         <header class="header" role="banner">
             <h1>🏠 Joshi Homelab</h1>
@@ -77,12 +89,12 @@
                 </div>
                 <div class="category-content" id="core-content" role="region" aria-labelledby="core-category-title">
                     <div class="services-grid" role="list" aria-label="Core services list">
-                        <a href="http://Joshivps1-ocp:5678" 
+                        <a href="https://n8n.joshi1.com" 
                            target="_blank" 
                            rel="noopener noreferrer" 
                            class="service-card"
                            role="listitem"
-                           aria-label="n8n workflow automation service, running on port 5678"
+                           aria-label="n8n workflow automation service, publicly accessible"
                            title="Open n8n workflow automation service">
                             <div class="service-icon" aria-hidden="true">
                                 <img src="assets/logos/n8n-logo.webp" alt="" loading="eager" width="72" height="72">
@@ -90,10 +102,10 @@
                             <div class="service-info">
                                 <h3>n8n</h3>
                                 <p>Workflow Automation</p>
-                                <span class="service-port" aria-label="Port 5678">:5678</span>
+                                <span class="service-port" aria-label="Publicly accessible">Public</span>
                             </div>
                         </a>
-                        <a href="https://Joshi1.com" 
+                        <a href="https://Joshi1.com"
                            target="_blank" 
                            rel="noopener noreferrer" 
                            class="service-card"
@@ -162,7 +174,7 @@
                 </div>
                 <div class="category-content" id="monitoring-content">
                     <div class="analytics-grid">
-                        <a href="http://Joshivps1-ocp:3001" target="_blank" rel="noopener noreferrer" class="analytics-card">
+                        <a href="https://uptime.joshi1.com" target="_blank" rel="noopener noreferrer" class="analytics-card">
                             <div class="analytics-icon">
                                 <img src="assets/logos/uptime-kuma-logo.png" alt="Uptime Kuma" loading="lazy" width="72" height="72">
                             </div>
@@ -558,6 +570,50 @@
             showNotification('Dashboard loaded successfully! 🚀', 'success', 3000);
         }, 1000);
 
+        // Hack Club Banner Detection and Management
+        function checkHackClubSource() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const source = urlParams.get('source');
+            
+            // Check if source parameter contains "hack club" (case insensitive)
+            if (source && source.toLowerCase().includes('hack club')) {
+                showHackClubBanner();
+            }
+        }
+
+        function showHackClubBanner() {
+            const banner = document.getElementById('hack-club-banner');
+            if (banner) {
+                banner.style.display = 'block';
+                
+                // Animate banner in
+                setTimeout(() => {
+                    banner.classList.add('show');
+                }, 100);
+                
+                // Store that banner was shown for this session
+                sessionStorage.setItem('hackClubBannerShown', 'true');
+            }
+        }
+
+        function dismissHackClubBanner() {
+            const banner = document.getElementById('hack-club-banner');
+            if (banner) {
+                banner.classList.remove('show');
+                
+                // Animate out and hide
+                setTimeout(() => {
+                    banner.style.display = 'none';
+                }, 300);
+                
+                // Store dismissal preference for this session
+                sessionStorage.setItem('hackClubBannerDismissed', 'true');
+            }
+        }
+
+        // Check for Hack Club source on page load
+        checkHackClubSource();
+
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -587,10 +643,10 @@
                 }
             });
         }
-        
+
         // ========================================
         // ACCESSIBILITY FUNCTIONS
-        // ========================================
+        // ======================================== 
         
         // Handle keyboard navigation for category headers
         function handleCategoryKeydown(event, categoryId) {
@@ -939,16 +995,6 @@
                 <div id="search-results" class="search-results" role="listbox"></div>
             </div>
         </div>
-    </div>
-
-
-
-    <!-- Maintenance Toggle Button (Bottom) -->
-    <div class="maintenance-toggle-bottom">
-        <button class="maintenance-btn-bottom" onclick="toggleMaintenance()" title="Toggle Maintenance Mode">
-            <span class="maintenance-icon">🔧</span>
-            <span class="maintenance-text">Maintenance</span>
-        </button>
     </div>
 </body>
 </html>
